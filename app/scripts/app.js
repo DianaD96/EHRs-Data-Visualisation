@@ -45,6 +45,9 @@ angular
             url: '/reports',
             parent: 'dashboard',
             templateUrl: 'views/dashboard/reports.html'
+          })
+          .state('theproject', {
+            url: '/theproject',
+            templateUrl: 'views/dashboard/theproject.html'
           });
-
   });

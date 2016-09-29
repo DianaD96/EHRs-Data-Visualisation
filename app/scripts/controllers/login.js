@@ -17,4 +17,11 @@ angular.module('yapp')
       return false;
     }
 
+    $scope.findmore = function() {
+
+      $location.path('/dashboard');
+
+      return false;
+    }
+
   });

@@ -9,6 +9,7 @@ Developed as a third year project.
 - cd `project-directory`
 - `bower install`
 - `npm install`
+- `npm install angular-material`
 - `gulp serve` - For development mode
 - `gulp build` - concat, minify and generate the files for deployment
 
