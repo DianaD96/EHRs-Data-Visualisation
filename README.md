@@ -1,11 +1,6 @@
-## Ani Theme - Free AngularJS Dashboard Starter Theme
+## EHRs-Data-Visualisation
 
-## [Demo](http://rawgit.com/start-angular/ani-theme/master/dist/index.html)
-
-Ani Theme is a Boilerplate for Animated AngularJS Starter Theme written with Bootstrap LESS. Powered by Gulp.
-![Preview](/examples/preview.png)
-
-Find out more [Free Angular Themes at StartAngular.com](http://www.startangular.com/).
+Developed as a third year project.
 
 ## Installation
 1. Clone this project or Download that ZIP file
@@ -16,10 +11,6 @@ Find out more [Free Angular Themes at StartAngular.com](http://www.startangular.
 - `npm install`
 - `gulp serve` - For development mode
 - `gulp build` - concat, minify and generate the files for deployment
-
-
-### Goodness of Bootstrap Less
-In the source, we have the less files of Bootstrap attached and the variables have been updated to create this theme. You can change the variable in the less file. Animation and Transitions are in separate less file.   
 
 ### Automation tools
 
