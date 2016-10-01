@@ -10,6 +10,7 @@
  */
 angular
   .module('yapp', [
+    'nvd3',
     'ui.router',
     'ngAnimate'
   ])
@@ -44,7 +45,8 @@ angular
           .state('reports', {
             url: '/reports',
             parent: 'dashboard',
-            templateUrl: 'views/dashboard/reports.html'
+            templateUrl: 'views/dashboard/report.html',
+            controller: 'ReportCtrl'
           })
           .state('theproject', {
             url: '/theproject',
