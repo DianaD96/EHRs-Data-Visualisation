@@ -2,6 +2,7 @@
 
 <head>
   <meta charset="utf-8">
+
   <!-- it's important for d3.js -->
   <script src="bower_components/angular/angular.js"></script>
   <script src="bower_components/d3/d3.js"></script>
@@ -16,17 +17,44 @@
   <h2>Reports</h2>
   <span class="glyphicon glyphicon-grain bg-fade"></span>
 
-<div class="dropdown">
-    <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Select Patient
-    <span class="caret"></span></button>
-    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">John Smith</a></li>
-      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Isaac Newton</a></li>
-      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Alan Turing</a></li>
-      <li role="presentation" class="divider"></li>
-      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Add Patient</a></li>
-    </ul>
-  </div>
+<form>
+    Search Patient: <input type="text" ng-model="name">
+</form>
+<p>The patient you're searching for is: {{name}}</p>
+
+<table class="table table-bordered table-striped">
+    
+    <thead>
+      <tr>
+        <td>
+          <a href="#" ng-click="sortType = 'first_name'">
+          <span ng-show="sortType == 'first_name'" class="fa fa-caret-down"></span>
+            First Name 
+          </a>
+        </td>
+        <td>
+          <a href="#" ng-click="sortType = 'last_name'">
+          <span ng-show="sortType == 'last_name'" class="fa fa-caret-down"></span>
+          Last Name
+          </a>
+        </td>
+        <td>
+          <a href="#" ng-click="sortType = 'city'">
+          <span ng-show="sortType == 'city'" class="fa fa-caret-down"></span>
+           City
+          </a>
+        </td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="item in patient |orderBy:sortType:sortReverse">
+        <td>{{ item.resource.name[0].given[0]}}</td>
+        <td>{{ item.resource.name[0].family[0] }}</td>
+        <td>{{ item.resource.address[0].city }}</td>
+      </tr>
+    </tbody>
+    
+  </table>
 
   <div class="jumbotron"> <nvd3 options="options1" data="data1"></nvd3> </div>
   <div class="jumbotron"> <nvd3 options="options2" data="data2"></nvd3> </div>

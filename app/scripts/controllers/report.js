@@ -9,7 +9,18 @@
  */
 angular.module('yapp')
 
-.controller('ReportCtrl', function($scope) {
+.controller('ReportCtrl', function($scope, $http) {
+
+$http.get('https://uclactive.aidbox.io/fhir/Patient').
+        then(function(response) {
+        	//searching parameters
+        	$scope.sortType     = 'first_name'; // set the default sort type
+			$scope.sortReverse  = false;  // set the default sort order
+			$scope.searchFish   = '';     // set the default search/filter term
+
+			//quering the data
+            $scope.patient = response.data.entry;
+        });
 
   // First Graph
   $scope.options1 = {

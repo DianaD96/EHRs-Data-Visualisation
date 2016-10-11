@@ -51,5 +51,10 @@ angular
           .state('theproject', {
             url: '/theproject',
             templateUrl: 'views/dashboard/theproject.html'
+          })
+          .state('patient', {
+            url: '/patient',
+            parent: 'dashboard',
+            templateUrl: 'views/dashboard/patient.html'
           });
   });
