@@ -1,9 +1,10 @@
-﻿Member Tlms No,Member Gender,Member Age,Day of Member Date Of Birth Key,Contract Main Code,Pay Plan Agg Monthly Term Fee,Day of Swipe date,Hour Name
+﻿MemberTlmsNo,MemberGender,MemberAge,DayOfMemberDateOfBirthKey,ContractMainCode,PayPlanAggMonthlyTermFee,DayofSwipeDate,HourName
 100000041,Male,65,14-Nov-51,DPP,£40.00,01-Jun-16,9AM
 100000041,Male,65,14-Nov-51,DPP,£40.00,08-Jun-16,12PM
 100000041,Male,65,14-Nov-51,DPP,£40.00,14-Jun-16,9AM
 100000041,Male,65,14-Nov-51,DPP,£40.00,15-Jun-16,12PM
 100000041,Male,65,14-Nov-51,DPP,£40.00,20-Jun-16,12PM
+100000041,Male,65,14-Nov-51,DPP,£40.00,20-Jun-16,2PM
 100000041,Male,65,14-Nov-51,DPP,£40.00,21-Jun-16,9AM
 100000041,Male,65,14-Nov-51,DPP,£40.00,27-Jun-16,12PM
 100000041,Male,65,14-Nov-51,DPP,£40.00,28-Jun-16,10AM
