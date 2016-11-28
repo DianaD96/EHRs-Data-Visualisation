@@ -17,44 +17,32 @@
   <h2>Reports</h2>
   <span class="glyphicon glyphicon-grain bg-fade"></span>
 
-<form>
-    Search Patient: <input type="text" ng-model="name">
-</form>
-<p>The patient you're searching for is: {{name}}</p>
+  <style>
+    table, th, td {
+     border: 1px solid black;
+     padding:5px;
+   }
+   table {
+     border-collapse: collapse;
+     margin:10px;
+   }
+ </style>
+ <body>
+  <button ng-click="readCSV()">
+    Display CSV as Data Table
+  </button>
+  <div id="divID">
+    <table>
+      <tr ng-repeat="x in data">
+        <td ng-repeat="y in x">{{ y }}</td>
+      </tr>
+    </table>
+  </div>
+  <div>
+    <table>
+    </table>
+  </div>
 
-<table class="table table-bordered table-striped">
-    
-    <thead>
-      <tr>
-        <td>
-          <a href="#" ng-click="sortType = 'first_name'">
-          <span ng-show="sortType == 'first_name'" class="fa fa-caret-down"></span>
-            First Name 
-          </a>
-        </td>
-        <td>
-          <a href="#" ng-click="sortType = 'last_name'">
-          <span ng-show="sortType == 'last_name'" class="fa fa-caret-down"></span>
-          Last Name
-          </a>
-        </td>
-        <td>
-          <a href="#" ng-click="sortType = 'city'">
-          <span ng-show="sortType == 'city'" class="fa fa-caret-down"></span>
-           City
-          </a>
-        </td>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="item in patient |orderBy:sortType:sortReverse">
-        <td>{{ item.resource.name[0].given[0]}}</td>
-        <td>{{ item.resource.name[0].family[0] }}</td>
-        <td>{{ item.resource.address[0].city }}</td>
-      </tr>
-    </tbody>
-    
-  </table>
 
   <div class="jumbotron"> <nvd3 options="options1" data="data1"></nvd3> </div>
   <div class="jumbotron"> <nvd3 options="options2" data="data2"></nvd3> </div>

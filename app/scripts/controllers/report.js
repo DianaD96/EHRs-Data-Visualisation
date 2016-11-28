@@ -12,16 +12,43 @@ angular.module('yapp')
 .controller('ReportCtrl', function($scope, $http) {
 
 $http.get('https://uclactive.aidbox.io/fhir/Patient').
-        then(function(response) {
-        	//searching parameters
-        	$scope.sortType     = 'first_name'; // set the default sort type
-			$scope.sortReverse  = false;  // set the default sort order
-			$scope.searchFish   = '';     // set the default search/filter term
+        then(function(response) {    
+        //searching parameters
+        $scope.sortType     = 'first_name'; // set the default sort type
+  			$scope.sortReverse  = false;  // set the default sort order
+  			$scope.searchFish   = '';     // set the default search/filter term
 
-			//quering the data
-            $scope.patient = response.data.entry;
-        });
+  			//quering the data
+        $scope.patient = response.data.entry;
+      });
 
+$scope.readCSV = function() {
+    // http get request to read CSV file content
+    $http.get('/csv/test2.csv').success($scope.processData);
+  };
+
+
+  $scope.processData = function(allText) {
+    // split content based on new line
+    var allTextLines = allText.split(/\r\n|\n/);
+    var headers = allTextLines[0].split(',');
+    var lines = [];
+
+    for ( var i = 0; i < allTextLines.length; i++) {
+      // split content based on comma
+      var data = allTextLines[i].split(',');
+      if (data.length == headers.length) {
+        var tarr = [];
+        for ( var j = 0; j < headers.length; j++) {
+          tarr.push(data[j]);
+        }
+        lines.push(tarr);
+      }
+    }
+    $scope.data = lines;
+  };
+
+  
   // First Graph
   $scope.options1 = {
     title: {
@@ -55,10 +82,10 @@ $http.get('https://uclactive.aidbox.io/fhir/Patient').
         left: 55
       },
       x: function(d) {
-        return d.label;
+        return d.date;
       },
       y: function(d) {
-        return d.value + (1e-10);
+        return d.hour + (1e-10);
       },
       showValues: true,
       valueFormat: function(d) {
@@ -78,29 +105,29 @@ $http.get('https://uclactive.aidbox.io/fhir/Patient').
   $scope.data1 = [{
     key: "Cumulative Return",
     values: [{
-      "label": "A",
-      "value": -29.765957771107
+      "date": "A",
+      "hour": -29.765957771107
     }, {
-      "label": "B",
-      "value": 0
+      "date": "B",
+      "hour": 0
     }, {
-      "label": "C",
-      "value": 32.807804682612
+      "date": "C",
+      "hour": 32.807804682612
     }, {
-      "label": "D",
-      "value": 196.45946739256
+      "date": "D",
+      "hour": 196.45946739256
     }, {
-      "label": "E",
-      "value": 0.19434030906893
+      "date": "E",
+      "hour": 0.19434030906893
     }, {
-      "label": "F",
-      "value": -98.079782601442
+      "date": "F",
+      "hour": -98.079782601442
     }, {
-      "label": "G",
-      "value": -13.925743130903
+      "date": "G",
+      "hour": -13.925743130903
     }, {
-      "label": "H",
-      "value": -5.1387322875705
+      "date": "H",
+      "hour": -5.1387322875705
     }]
   }]
 
