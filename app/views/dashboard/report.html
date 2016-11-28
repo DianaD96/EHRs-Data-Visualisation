@@ -14,7 +14,7 @@
 
 
 
-<body ng-controller="ReportCtrl">
+<body ng-controller="ReportCtrl"> 
   <a ui-sref="overview" class="pull-right btn btn-primary btn-outline btn-rounded">Back to Overview</a>
   <h2>Reports</h2>
   <span class="glyphicon glyphicon-grain bg-fade"></span>
@@ -48,7 +48,7 @@
 <!-- <div id = "chart1">
   <svg></svg>
 </div> -->
-
+  <p>Data: {{jsonData}}</p>
   <div class="jumbotron"> <nvd3 options="options1" data="data1"></nvd3> </div>
   <div class="jumbotron"> <nvd3 options="options2" data="data2"></nvd3> </div>
   <div class="jumbotron"> <nvd3 options="options3" data="data3"></nvd3> </div>
