@@ -1,14 +1,12 @@
-'use strict';
+var lineNr = 0;
 
-
- angular.module('yapp')
-
- .controller('ReportCtrl', function($scope, $http) {
-
+angular.module('yapp').controller('ReportCtrl', function($scope, $http) {
+  
   $http.get('https://uclactive.aidbox.io/fhir/Patient').
   then(function(response) {    
         $scope.getCSV(); // THIS IS NR 1 BUG THAT NEEDS TO BE SOLVED!!!! - How do you call this function on page load
-        //searching parameters
+		$scope.getMongoData();
+	   //searching parameters
         $scope.sortType     = 'first_name'; // set the default sort type
   			$scope.sortReverse  = false;  // set the default sort order
   			$scope.searchFish   = '';     // set the default search/filter term
@@ -17,7 +15,84 @@
         $scope.patient = response.data.entry;
       });
 
+	// Date Picker Function
+	$scope.popup1 = {
+		opened: false
+	};
+	$scope.open1 = function() {
+		$scope.popup1.opened = true;
+	};
   
+  $scope.formats = ['MMMM', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy','d!.M!.yyyy', 'shortDate'];
+  $scope.format = $scope.formats[0];
+  $scope.altInputFormats = ['M!/d!/yyyy'];
+  
+  $scope.today = function() {
+    $scope.dt = new Date();
+  };
+  $scope.today();
+
+  $scope.clear = function() {
+    $scope.dt = null;
+	$scope.memberNo = null;
+  };
+
+  $scope.options = {
+    customClass: getDayClass,
+    minDate: new Date(),
+    showWeeks: true
+  };
+
+  // Disable weekend selection
+  function disabled(data) {
+    var date = data.date,
+      mode = data.mode;
+    return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+  }
+
+  $scope.toggleMin = function() {
+    $scope.options.minDate = $scope.options.minDate ? null : new Date();
+  };
+
+  $scope.toggleMin();
+
+  $scope.setDate = function(year, month, day) {
+    $scope.dt = new Date(year, month, day);
+  };
+
+  var tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  var afterTomorrow = new Date(tomorrow);
+  afterTomorrow.setDate(tomorrow.getDate() + 1);
+  $scope.events = [
+    {
+      date: tomorrow,
+      status: 'full'
+    },
+    {
+      date: afterTomorrow,
+      status: 'partially'
+    }
+  ];
+
+  function getDayClass(data) {
+    var date = data.date,
+      mode = data.mode;
+    if (mode === 'day') {
+      var dayToCheck = new Date(date).setHours(0,0,0,0);
+
+      for (var i = 0; i < $scope.events.length; i++) {
+        var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
+
+        if (dayToCheck === currentDay) {
+          return $scope.events[i].status;
+        }
+      }
+    }
+
+    return '';
+  }
+ 
 // This will parse a delimited string into an array of
 // arrays. The default delimiter is the comma, but this
 // can be overridden in the second argument.
@@ -91,19 +166,37 @@ function CSVToArray(strData, strDelimiter) {
     return str;
   }
 
-  //reading CSV
-  $scope.readCSV = function() {
-    // http get request to read CSV file content
-    $http.get('/csv/test2.csv').success($scope.processData);
-  };
-
+  $scope.getMongoData = function() {
+	
+  }
+  
   $scope.getCSV = function() {
     // http get request to read CSV file content
     $http.get('/csv/test2.csv').success($scope.startParsing);
   };
   $scope.startParsing = function (allText) {
-    $scope.jsonData = CSV2JSON(allText);
+    $scope.jsonData = [{ "key": "Cumulative Return", "values": JSON.parse(CSV2JSON(allText))}];
   }
+
+  //This os for for table display
+  //reading CSV
+  $scope.readCSV = function() {
+    // http get request to read CSV file content
+    $http.get('/csv/test2.csv').success($scope.processData);
+	
+	
+	//Converter Class
+	var Converter = require("csvtojson").Converter;
+	var converter = new Converter({});
+
+	//end_parsed will be emitted once parsing finished
+	converter.on("end_parsed", function (jsonArray) {
+	   console.log(jsonArray); //here is your result jsonarray
+	});
+
+	//read from file
+	require("fs").createReadStream("/csv/vGymSwipeGM.csv").pipe(converter);
+  };
 
   //showing the table
   $scope.processData = function(allText) {
@@ -203,42 +296,32 @@ function CSVToArray(strData, strDelimiter) {
         left: 55
       },
       x: function(d) {
-        return d3.time.format('%d-%m-%y')(new Date(d.date));
+        return d3.time.format('%d-%m-%y')(new Date(d.DayofSwipeDate));
       },
       y: function(d) {
         var timeParser = d3.time.format("%I%p");
-        var time = new Date(timeParser.parse(d.hour));
+        var time = new Date(timeParser.parse(d.HourName));
         var hour = time.getHours();
         return hour;
       },
       showValues: true,
       duration: 500,
       xAxis: {
-        axisLabel: 'Date'
+        axisLabel: 'DayofSwipeDate'
       },
       yAxis: {
-        axisLabel: 'Time of Day',
+        axisLabel: 'HourName',
         axisLabelDistance: -10
       }
     }
   };
 
-  $scope.data1 = [{
+/*  $scope.datax = [{
     key: "Cumulative Return",
-    values: [{
-      "date": "01-Jun-16",
-      "hour": "9PM"
-    }, {
-      "date": "04-Jun-16",
-      "hour": "10PM"
-    }, {
-      "date": "02-Jun-16",
-      "hour": "2PM"
-    }, {
-      "date": "03-Jun-16",
-      "hour": "4PM"
-    }]
-  }]
+    values: [{"DayofSwipeDate": ""}]
+  }]*/
+
+  $scope.data1 = [{"key":"Cumulative Return","values":[{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"01-Jun-16","HourName":"9AM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"08-Jun-16","HourName":"12PM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"14-Jun-16","HourName":"9AM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"15-Jun-16","HourName":"12PM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"20-Jun-16","HourName":"12PM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"20-Jun-16","HourName":"2PM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"21-Jun-16","HourName":"9AM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"27-Jun-16","HourName":"12PM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"28-Jun-16","HourName":"10AM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"11-Jul-16","HourName":"12PM"}]}]
 
   // Second Graph
   $scope.options2 = {
