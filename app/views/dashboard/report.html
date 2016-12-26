@@ -1,59 +1,79 @@
-<html ng-app="yapp">
+    <html ng-app="yapp">
+<base href="http://uclactive.westeurope.cloudapp.azure.com:3000">
+    <head>
+      <meta charset="utf-8">
+      <!-- it's important for d3.js -->
+      <script src="bower_components/angular/angular.js"></script>
+      <script src="bower_components/d3/d3.js"></script>
+      <script src="bower_components/nvd3/nv.d3.js"></script>
+      <!-- or use another assembly -->
+      <script src="bower_components/angular-nvd3/dist/angular-nvd3.js"></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.css" />
+    </head>
 
-<head>
-  <meta charset="utf-8">
+    <body ng-controller="ReportCtrl"> 
+      <a ui-sref="overview" class="pull-right btn btn-primary btn-outline btn-rounded">Back to Overview</a>
+      <h2>Reports</h2>
+      <span class="glyphicon glyphicon-grain bg-fade"></span>
 
-  <!-- it's important for d3.js -->
-  <script src="bower_components/angular/angular.js"></script>
-  <script src="bower_components/d3/d3.js"></script>
-  <script src="bower_components/nvd3/nv.d3.js"></script>
-  <!-- or use another assembly -->
-  <script src="bower_components/angular-nvd3/dist/angular-nvd3.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.css" />
-</head>
+        <p>Search Criteria </p>
+        <p>MemberNo: </p> <p><input type="text" ng-model="memberNo"></p>
 
+        <p>Month:
+        <div class="row">
+            <div class="col-md-6">
+                <p class="input-group">
+                  <input type="text" class="form-control" uib-datepicker-popup="{{format}}" datepicker-mode="'month'" close-on-date-selection="true" show-weeks="false" ng-model="dt" is-open="popup1.opened" min-date="minDate" max-date="maxDate" datepicker-options="{minMode: 'month'}" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+                  <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+                </p>
+            </div>
+        </div> </p>
 
+        <pre>Query Data: <p></p> MemberNo: <em ng-bind="memberNo"></em> <p></p> Month: <em>{{dt | date:'MMMM' }}</em></pre>
 
-<body ng-controller="ReportCtrl"> 
-  <a ui-sref="overview" class="pull-right btn btn-primary btn-outline btn-rounded">Back to Overview</a>
-  <h2>Reports</h2>
-  <span class="glyphicon glyphicon-grain bg-fade"></span>
+        <button type="button" class="btn btn-sm btn-info" ng-click="today()">Today</button>
+        <button type="button" class="btn btn-sm btn-danger" ng-click="clear()">Clear</button>
+        <p></p>
 
-  <style>
-    table, th, td {
-     border: 1px solid black;
-     padding:5px;
-   }
-   table {
-     border-collapse: collapse;
-     margin:10px;
-   }
- </style>
- <body>
-  <button ng-click="readCSV()">
-    Display CSV as Data Table
-  </button>
-  <div id="divID">
-    <table>
-      <tr ng-repeat="x in data">
-        <td ng-repeat="y in x">{{ y }}</td>
-      </tr>
-    </table>
-  </div>
-  <div>
-    <table>
-    </table>
-  </div>
+      <button ng-click="query()">Query Data</button>
+		
+      <style>
+        table, th, td {
+         border: 1px solid black;
+         padding:5px;
+       }
+       table {
+         border-collapse: collapse;
+         margin:10px;
+       }
+     </style>
+     <body>
+      <button ng-click="readCSV()">
+        Display CSV as Data Table
+      </button>
+      <div id="divID">
+        <table>
+          <tr ng-repeat="x in data">
+            <td ng-repeat="y in x">{{ y }}</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table>
+        </table>
+      </div>
 
-<!-- <div id = "chart1">
-  <svg></svg>
-</div> -->
-  <p>Data: {{jsonData}}</p>
-  <div class="jumbotron"> <nvd3 options="options1" data="data1"></nvd3> </div>
-  <div class="jumbotron"> <nvd3 options="options2" data="data2"></nvd3> </div>
-  <div class="jumbotron"> <nvd3 options="options3" data="data3"></nvd3> </div>
-  <div class="jumbotron"> <nvd3 options="options4" data="data4"></nvd3> </div>
-  <div class="jumbotron"> <nvd3 options="options5" data="data5"></nvd3> </div>
-</body>
+    <!-- <div id = "chart1">
+      <svg></svg>
+    </div> -->
+    <!--   <p>Data: {{jsonData}}</p> -->
+      <div class="jumbotron"> <nvd3 options="options1" data="jsonData"></nvd3> </div>
+      <div class="jumbotron"> <nvd3 options="options2" data="data2"></nvd3> </div>
+      <div class="jumbotron"> <nvd3 options="options3" data="data3"></nvd3> </div>
+      <div class="jumbotron"> <nvd3 options="options4" data="data4"></nvd3> </div>
+      <div class="jumbotron"> <nvd3 options="options5" data="data5"></nvd3> </div>
+    </body>
 
-</html>
+    </html>

@@ -8,13 +8,29 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http) {
 		$scope.getMongoData();
 	   //searching parameters
         $scope.sortType     = 'first_name'; // set the default sort type
-  			$scope.sortReverse  = false;  // set the default sort order
-  			$scope.searchFish   = '';     // set the default search/filter term
+  		$scope.sortReverse  = false;  // set the default sort order
+  		$scope.searchFish   = '';     // set the default search/filter term
 
-  			//quering the data
+  		//quering the data
         $scope.patient = response.data.entry;
       });
 
+	// Send Query Data to NodeJs
+	$scope.query = function () {
+		var queryData = JSON.stringify({name:"test message"});
+		$http({
+			method: 'POST',
+			url: 'http://uclactive.westeurope.cloudapp.azure.com:3000/query',
+			data: queryData,
+			withCredentials: true,
+			headers: {
+                    'Content-Type': 'application/json; charset=utf-8'
+			}
+		})
+	.success(function() {console.log("Success" + data);})
+	.error(function() {console.log("Erro: "+data);});
+	}
+	  
 	// Date Picker Function
 	$scope.popup1 = {
 		opened: false
@@ -22,76 +38,76 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http) {
 	$scope.open1 = function() {
 		$scope.popup1.opened = true;
 	};
-  
-  $scope.formats = ['MMMM', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy','d!.M!.yyyy', 'shortDate'];
-  $scope.format = $scope.formats[0];
-  $scope.altInputFormats = ['M!/d!/yyyy'];
-  
-  $scope.today = function() {
-    $scope.dt = new Date();
-  };
-  $scope.today();
+	  
+	$scope.formats = ['MMMM', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy','d!.M!.yyyy', 'shortDate'];
+	$scope.format = $scope.formats[0];
+	$scope.altInputFormats = ['M!/d!/yyyy'];
+	  
+	$scope.today = function() {
+		$scope.dt = new Date();
+	};
+	$scope.today();
 
-  $scope.clear = function() {
-    $scope.dt = null;
-	$scope.memberNo = null;
-  };
+	$scope.clear = function() {
+		$scope.dt = null;
+		$scope.memberNo = null;
+	};
 
-  $scope.options = {
-    customClass: getDayClass,
-    minDate: new Date(),
-    showWeeks: true
-  };
+	$scope.options = {
+		customClass: getDayClass,
+		minDate: new Date(),
+		showWeeks: true
+	};
 
-  // Disable weekend selection
-  function disabled(data) {
-    var date = data.date,
-      mode = data.mode;
-    return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
-  }
+	// Disable weekend selection
+	function disabled(data) {
+		var date = data.date,
+		mode = data.mode;
+		return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+	}
+	
+	$scope.toggleMin = function() {
+		$scope.options.minDate = $scope.options.minDate ? null : new Date();
+	};
 
-  $scope.toggleMin = function() {
-    $scope.options.minDate = $scope.options.minDate ? null : new Date();
-  };
+	$scope.toggleMin();
 
-  $scope.toggleMin();
+	$scope.setDate = function(year, month, day) {
+		$scope.dt = new Date(year, month, day);
+	};
 
-  $scope.setDate = function(year, month, day) {
-    $scope.dt = new Date(year, month, day);
-  };
+	var tomorrow = new Date();
+	tomorrow.setDate(tomorrow.getDate() + 1);
+	var afterTomorrow = new Date(tomorrow);
+	afterTomorrow.setDate(tomorrow.getDate() + 1);
+	$scope.events = [
+		{
+			date: tomorrow,
+			status: 'full'
+		},
+		{
+		date: afterTomorrow,
+		status: 'partially'
+		}
+	];
 
-  var tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  var afterTomorrow = new Date(tomorrow);
-  afterTomorrow.setDate(tomorrow.getDate() + 1);
-  $scope.events = [
-    {
-      date: tomorrow,
-      status: 'full'
-    },
-    {
-      date: afterTomorrow,
-      status: 'partially'
-    }
-  ];
+	function getDayClass(data) {
+		var date = data.date,
+			mode = data.mode;
+		if (mode === 'day') {
+			var dayToCheck = new Date(date).setHours(0,0,0,0);
 
-  function getDayClass(data) {
-    var date = data.date,
-      mode = data.mode;
-    if (mode === 'day') {
-      var dayToCheck = new Date(date).setHours(0,0,0,0);
+			for (var i = 0; i < $scope.events.length; i++) {
+				var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
 
-      for (var i = 0; i < $scope.events.length; i++) {
-        var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
+				if (dayToCheck === currentDay) {
+					return $scope.events[i].status;
+				}
+			}
+		}
 
-        if (dayToCheck === currentDay) {
-          return $scope.events[i].status;
-        }
-      }
-    }
-
-    return '';
-  }
+		return '';
+	}
  
 // This will parse a delimited string into an array of
 // arrays. The default delimiter is the comma, but this
