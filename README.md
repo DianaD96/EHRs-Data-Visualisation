@@ -14,6 +14,8 @@ Developed as a third year project.
 - `gulp serve` - For development mode
 - `gulp build` - concat, minify and generate the files for deployment
 
+## Development
+Chrome devs are asked to download the [Allow-Control-Allow-Origin](https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?hl=en-GB) Extension to be able to allow POST request to a different domain with AngularJS $http.  service. (Error: CORS header 'Access-Control-Allow-Origin' missing) [This is because the server to which the post request is being sent to has to implement CORS to grant JavaScript from your website access. Your JavaScript can't grant itself permission to access another website.](http://stackoverflow.com/questions/23823010/how-to-enable-cors-in-angularjs)
 ### Automation tools
 
 - [Gulp](http://gulpjs.com/)
