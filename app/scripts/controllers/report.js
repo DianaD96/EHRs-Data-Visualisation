@@ -1,11 +1,35 @@
 var lineNr = 0;
 
-angular.module('yapp').controller('ReportCtrl', function($scope, $http) {
+angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter, NgTableParams) {
   
+    var self = this;
+	$scope.data = [{name: "Moroni1", age: 50}, {name: "John2", age: 20},{name: "Moroni3", age: 50}, {name: "John4", age: 20},{name: "Moroni5", age: 50}, {name: "John6", age: 20},{name: "Moroni7", age: 50}, {name: "John8", age: 20},{name: "Moroni9", age: 50}, {name: "John10", age: 20},{name: "Moroni11", age: 50}, {name: "John12", age: 20} /*,*/];
+	
+
+	$scope.tableParams = createUsingFullOptions();
+	function createUsingFullOptions() {
+      var initialParams = {
+		page: 1,
+        count: 5 // initial page size
+		
+      };
+      var initialSettings = {
+        // page size buttons (right set of buttons in demo)
+        counts: [],
+        // determines the pager buttons (left set of buttons in demo)
+        paginationMaxBlocks: 13,
+        paginationMinBlocks: 2,
+        dataset: $scope.data
+      };
+      return new NgTableParams(initialParams, initialSettings);
+    }
+	
+	
+ 
+
   $http.get('https://uclactive.aidbox.io/fhir/Patient').
   then(function(response) {    
-        $scope.getCSV(); // THIS IS NR 1 BUG THAT NEEDS TO BE SOLVED!!!! - How do you call this function on page load
-		$scope.getMongoData();
+        $scope.getCSV(); 
 	   //searching parameters
         $scope.sortType     = 'first_name'; // set the default sort type
   		$scope.sortReverse  = false;  // set the default sort order
@@ -15,9 +39,10 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http) {
         $scope.patient = response.data.entry;
       });
 
+	 
 	// Send Query Data to NodeJs
 	$scope.query = function () {
-		var queryData = JSON.stringify({name:"test message"});
+		var queryData = JSON.stringify({MemberID_Hash: $scope.memberNo, Date_Key_Month: $scope.dt.getMonth()});
 		$http({
 			method: 'POST',
 			url: 'http://uclactive.westeurope.cloudapp.azure.com:3000/query',
@@ -28,9 +53,9 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http) {
 			}
 		})
 	.success(function() {console.log("Success" + data);})
-	.error(function() {console.log("Erro: "+data);});
-	}
-	  
+	.error(function() {console.log("Error: "+data);});
+	}	
+
 	// Date Picker Function
 	$scope.popup1 = {
 		opened: false
@@ -51,6 +76,8 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http) {
 	$scope.clear = function() {
 		$scope.dt = null;
 		$scope.memberNo = null;
+		    $scope.mytime = null;
+
 	};
 
 	$scope.options = {
@@ -182,9 +209,6 @@ function CSVToArray(strData, strDelimiter) {
     return str;
   }
 
-  $scope.getMongoData = function() {
-	
-  }
   
   $scope.getCSV = function() {
     // http get request to read CSV file content
@@ -1131,4 +1155,5 @@ function stream_index(d, i) {
         }
 
         ]
+		
       });

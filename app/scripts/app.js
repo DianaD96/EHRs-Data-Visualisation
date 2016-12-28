@@ -13,7 +13,8 @@ angular
     'nvd3',
     'ui.router',
     'ngAnimate',
-	'ui.bootstrap'
+	'ui.bootstrap',
+	'ngTable'
   ])
   .config(function($stateProvider, $urlRouterProvider) {
 
