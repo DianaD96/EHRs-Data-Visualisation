@@ -42,7 +42,9 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
 	 
 	// Send Query Data to NodeJs
 	$scope.query = function () {
-		var queryData = JSON.stringify({MemberID_Hash: $scope.memberNo, Date_Key_Month: $scope.dt.getMonth()});
+		var month = ("0" + ($scope.dt.getMonth() + 1)).slice(-2);
+		var date = $scope.dt.getFullYear() + "" + month;
+		var queryData = JSON.stringify({MemberID_Hash: $scope.memberNo, Date_Key_Month: date});
 		$http({
 			method: 'POST',
 			url: 'http://uclactive.westeurope.cloudapp.azure.com:3000/query',
