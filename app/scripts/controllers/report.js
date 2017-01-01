@@ -1,8 +1,17 @@
 var lineNr = 0;
 
+
 angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter, NgTableParams) {
   
-    var self = this;
+    $http.get('/getQueryJson').success(function(data,status) {
+        console.log('SUCCESS: ' + status);
+        console.log(data);
+    }).error(function(error) {
+        console.log('ERROR');
+        console.log(data);
+    })
+	
+	var self = this;
 	$scope.data = [{name: "Moroni1", age: 50}, {name: "John2", age: 20},{name: "Moroni3", age: 50}, {name: "John4", age: 20},{name: "Moroni5", age: 50}, {name: "John6", age: 20},{name: "Moroni7", age: 50}, {name: "John8", age: 20},{name: "Moroni9", age: 50}, {name: "John10", age: 20},{name: "Moroni11", age: 50}, {name: "John12", age: 20} /*,*/];
 	
 
@@ -23,9 +32,6 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
       };
       return new NgTableParams(initialParams, initialSettings);
     }
-	
-	
- 
 
   $http.get('https://uclactive.aidbox.io/fhir/Patient').
   then(function(response) {    
@@ -57,7 +63,7 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
 	.success(function() {console.log("Success" + data);})
 	.error(function() {console.log("Error: "+data);});
 	}	
-
+	  
 	// Date Picker Function
 	$scope.popup1 = {
 		opened: false

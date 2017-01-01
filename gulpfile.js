@@ -15,14 +15,14 @@ gulp.task('styles', function() {
 });
 
 gulp.task('jshint', function() {
-  return gulp.src('app/scripts/**/*.js')
+  return gulp.src[('app/scripts/**/*.js','server/*.js')]
     .pipe($.jshint())
     //.pipe($.jshint.reporter('jshint-stylish'))
     //.pipe($.jshint.reporter('fail'));
 });
 
 gulp.task('jscs', function() {
-  return gulp.src('app/scripts/**/*.js')
+  return gulp.src[('app/scripts/**/*.js', 'server/*.js')]
     .pipe($.jscs());
 });
 
@@ -66,6 +66,7 @@ gulp.task('fonts', function() {
 gulp.task('extras', function() {
   return gulp.src([
     'app/*.*',
+	'server/*.*',
     '!app/*.html',
     'node_modules/apache-server-configs/dist/.htaccess'
   ], {
@@ -78,14 +79,26 @@ gulp.task('clean', require('del').bind(null, ['.tmp', 'dist']));
 gulp.task('connect', ['styles'], function() {
   var serveStatic = require('serve-static');
   var serveIndex = require('serve-index');
+  var bodyParser = require("body-parser"); // Require Body parser module
+  var logger = require('morgan');
+  var cookieParser = require('cookie-parser');
+  var express = require('express');
+  var path = require('path');
+
   var app = require('connect')()
     .use(require('connect-livereload')({port: 35729}))
     .use(serveStatic('.tmp'))
     .use(serveStatic('app'))
+	.use(logger('dev'))
+	.use(bodyParser.json())
+	.use(bodyParser.urlencoded({ extended: false }))
+	.use(cookieParser())
+	.use(express.static(path.join(__dirname, 'public')))
     // paths to bower_components should be relative to the current file
     // e.g. in app/index.html you should use ../bower_components
     .use('/bower_components', serveStatic('bower_components'))
     .use(serveIndex('app'));
+
 
   require('http').createServer(app)
     .listen(9000)
@@ -136,6 +149,7 @@ gulp.task('watch', ['connect'], function() {
 
   // watch for changes
   gulp.watch([
+	'server/*.js',
     'app/**/*.html',
     '.tmp/styles/**/*.css',
     'app/scripts/**/*.js',
@@ -156,7 +170,7 @@ gulp.task('build', ['clean'], function() {
 });
 
 gulp.task('docs', [], function() {
-  return gulp.src('app/scripts/**/**')
+  return gulp.src[('app/scripts/**/**', 'server/*.js')]
     .pipe($.ngdocs.process())
     .pipe(gulp.dest('./docs'));
 });
