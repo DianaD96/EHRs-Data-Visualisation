@@ -10,6 +10,9 @@ Developed as a third year project.
 - `bower install`
 - `npm install`
 - `npm install angular-material`
+- `npm install express`
+- `npm install body-parser`
+- `npm install method-override`
 - `bower install angular-nvd3`
 - `gulp serve` - For development mode
 - `gulp build` - concat, minify and generate the files for deployment
