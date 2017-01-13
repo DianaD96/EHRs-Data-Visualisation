@@ -1,16 +1,15 @@
 var lineNr = 0;
 
 
+// Nodejs/Express Server Paths
+var expressQuery = 'http://localhost:3000/query';
+
+// MEAN Dashboard Server Paths
+
 angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter, NgTableParams) {
   
-    $http.get('/getQueryJson').success(function(data,status) {
-        console.log('SUCCESS: ' + status);
-        console.log(data);
-    }).error(function(error) {
-        console.log('ERROR');
-        console.log(data);
-    })
-	
+
+
 	var self = this;
 	$scope.data = [{name: "Moroni1", age: 50}, {name: "John2", age: 20},{name: "Moroni3", age: 50}, {name: "John4", age: 20},{name: "Moroni5", age: 50}, {name: "John6", age: 20},{name: "Moroni7", age: 50}, {name: "John8", age: 20},{name: "Moroni9", age: 50}, {name: "John10", age: 20},{name: "Moroni11", age: 50}, {name: "John12", age: 20} /*,*/];
 	
@@ -45,24 +44,44 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
         $scope.patient = response.data.entry;
       });
 
-	 
+	$scope.nrOfSwipes = "";
 	// Send Query Data to NodeJs
 	$scope.query = function () {
+		console.log("I am hereee");
 		var month = ("0" + ($scope.dt.getMonth() + 1)).slice(-2);
 		var date = $scope.dt.getFullYear() + "" + month;
 		var queryData = JSON.stringify({MemberID_Hash: $scope.memberNo, Date_Key_Month: date});
-		$http({
+		console.log("data: ", queryData);
+		console.log("url: ", expressQuery);
+		
+		
+		var promise = $http({ //send query to node/express server
 			method: 'POST',
-			url: 'http://uclactive.westeurope.cloudapp.azure.com:3000/query',
+			url: expressQuery,
 			data: queryData,
 			withCredentials: true,
 			headers: {
-                    'Content-Type': 'application/json; charset=utf-8'
+                'Content-Type': 'application/json; charset=utf-8'
 			}
-		})
-	.success(function() {console.log("Success" + data);})
-	.error(function() {console.log("Error: "+data);});
-	}	
+		}).then(() => { //read backend response
+			//console.log (">>>>>>>>");
+			
+		});
+		
+	};	
+	
+	$scope.show = function () {
+		$http({
+			method : "POST",
+			url : "http://localhost:9000/sendToController"
+			}).then((response) => {
+			  console.log("responde.data: ", response.data);
+			  $scope.nrOfSwipes = response.data;
+			}).catch((err) => {
+			  //if error occurs
+			console.log('err', err.stack); });
+	};
+  
 	  
 	// Date Picker Function
 	$scope.popup1 = {
