@@ -2,9 +2,12 @@ var lineNr = 0;
 
 
 // Nodejs/Express Server Paths
-var expressQuery = 'http://localhost:3000/query';
+var getNrOfSwipes = 'http://localhost:3000/getNrOfSwipes';
+var findUserRank = 'http://localhost:3000/findUserRank';
+var monthlyStatisticsLeast = 'http://localhost:3000/monthlyStatisticsLeast';
+var monthlyStatisticsTop = 'http://localhost:3000/monthlyStatisticsTop'
+var getNeighbouringValues = 'http://localhost:3000/getNeighbouringValues';
 
-// MEAN Dashboard Server Paths
 
 angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter, NgTableParams) {
   
@@ -44,7 +47,8 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
         $scope.patient = response.data.entry;
       });
 
-	$scope.nrOfSwipes = "";
+	$scope.dataResponse = "";
+	
 	// Send Query Data to NodeJs
 	$scope.query = function () {
 		console.log("I am hereee");
@@ -52,37 +56,87 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
 		var date = $scope.dt.getFullYear() + "" + month;
 		var queryData = JSON.stringify({MemberID_Hash: $scope.memberNo, Date_Key_Month: date});
 		console.log("data: ", queryData);
-		console.log("url: ", expressQuery);
 		
+		
+		getFirstGraphQuery(queryData, monthlyStatisticsLeast);
+		getSecondGraphQuery(queryData, monthlyStatisticsTop);
+	};	
+	
+	$scope.show = function () {
+		getFirstGraphShow();
+		getSecondGraphShow();
+	};
+	
+	function getFirstGraphQuery (queryData, queryUrl) {
 		
 		var promise = $http({ //send query to node/express server
 			method: 'POST',
-			url: expressQuery,
+			url: queryUrl,
 			data: queryData,
 			withCredentials: true,
 			headers: {
                 'Content-Type': 'application/json; charset=utf-8'
 			}
 		}).then(() => { //read backend response
-			//console.log (">>>>>>>>");
+			console.log ("11111111");
 			
 		});
-		
-	};	
+	}
 	
-	$scope.show = function () {
+	function getFirstGraphShow() {
 		$http({
 			method : "POST",
 			url : "http://localhost:9000/sendToController"
 			}).then((response) => {
 			  console.log("responde.data: ", response.data);
-			  $scope.nrOfSwipes = response.data;
+			  $scope.dataResponse = response.data;
+			  console.log ("1st graph", $scope.dataResponse);
+			  
+			  $scope.data1 = [{
+                key: "Cumulative Return",
+                values: $scope.dataResponse
+            }]
+			
 			}).catch((err) => {
 			  //if error occurs
 			console.log('err', err.stack); });
-	};
-  
-	  
+	}
+	
+	function getSecondGraphQuery (queryData, queryUrl) {
+		
+		var promise = $http({ //send query to node/express server
+			method: 'POST',
+			url: queryUrl,
+			data: queryData,
+			withCredentials: true,
+			headers: {
+                'Content-Type': 'application/json; charset=utf-8'
+			}
+		}).then(() => { //read backend response
+			console.log ("2222222222222");
+			
+		});
+	}	
+	
+	function getSecondGraphShow() {
+		$http({
+			method : "POST",
+			url : "http://localhost:9000/sendToController2"
+			}).then((response) => {
+			  console.log("responde.data: ", response.data);
+			  $scope.dataResponse2 = response.data;
+			  
+			  console.log ("2nd graph", $scope.dataResponse2);
+			  $scope.data2 = [{
+                key: "Cumulative Return",
+                values: $scope.dataResponse2
+            }]
+			
+			}).catch((err) => {
+			  //if error occurs
+			console.log('err', err.stack); });
+	}
+	
 	// Date Picker Function
 	$scope.popup1 = {
 		opened: false
@@ -330,136 +384,120 @@ function CSVToArray(strData, strDelimiter) {
       });
       })
 */
-  // First Graph
-  $scope.options1 = {
-    title: {
-      enable: true,
-      text: 'UCL-Active - 1st example chart (This is just a demo) - made with angular-nvd3'
-    },
-    subtitle: {
-      enable: true,
-      text: 'Subtitle for simple line chart. Lorem ipsum dolor sit amet, at eam blandit sadipscing, vim adhuc sanctus disputando ex, cu usu affert alienum urbanitas.',
-      css: {
-        'text-align': 'center',
-        'margin': '10px 13px 0px 7px'
-      }
-    },
-    caption: {
-      enable: true,
-      html: '<b>Figure 1.</b> INSERT DESCRIPTION HERE OF WHAT\'S HAPPENING IN THE FIGURE',
-      css: {
-        'text-align': 'justify',
-        'margin': '10px 13px 0px 7px'
-      }
-    },
 
-    chart: {
-      type: 'discreteBarChart',
-      height: 450,
-      margin: {
-        top: 20,
-        right: 20,
-        bottom: 50,
-        left: 55
-      },
-      x: function(d) {
-        return d3.time.format('%d-%m-%y')(new Date(d.DayofSwipeDate));
-      },
-      y: function(d) {
-        var timeParser = d3.time.format("%I%p");
-        var time = new Date(timeParser.parse(d.HourName));
-        var hour = time.getHours();
-        return hour;
-      },
-      showValues: true,
-      duration: 500,
-      xAxis: {
-        axisLabel: 'DayofSwipeDate'
-      },
-      yAxis: {
-        axisLabel: 'HourName',
-        axisLabelDistance: -10
-      }
-    }
-  };
+// First Graph 
+    $scope.options1 = {
+		title: {
+			enable: true,
+			text: 'UCL-Active - Least 10 active members'
+		},
+		subtitle: {
+			enable: true,
+			text: 'The graph displays how many members have the least number of swipes in the given month.',
+			css: {
+				'text-align': 'center',
+				'margin': '10px 13px 0px 7px'
+			}
+		},
+		caption: {
+			enable: true,
+			html: '<b>Figure 1</b>',
+			css: {
+				'text-align': 'center',
+				'margin': '10px 13px 0px 7px'
+			}
+		},
+              chart: {
+                  type: 'discreteBarChart',
+                  height: 450,
+                  margin : {
+                      top: 20,
+                      right: 20,
+                      bottom: 50,
+                      left: 70
+                  },
+                  x: function(d){return d.nrOfGymSwipes;},
+                  y: function(d){return d.nrOfMembers + (1e-10);},
+                  showValues: true,
+                  valueFormat: function(d){
+                      return d3.format(",d")(d);
+                  },
+                  duration: 500,
+                  xAxis: {
+                      axisLabel: 'Nr of Gym Swipes'
+                  },
+                  yAxis: {
+                      axisLabel: 'Nr of Members',
+                      axisLabelDistance: 10
+                  }
+              }
+          };
 
-/*  $scope.datax = [{
-    key: "Cumulative Return",
-    values: [{"DayofSwipeDate": ""}]
-  }]*/
-
-  $scope.data1 = [{"key":"Cumulative Return","values":[{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"01-Jun-16","HourName":"9AM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"08-Jun-16","HourName":"12PM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"14-Jun-16","HourName":"9AM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"15-Jun-16","HourName":"12PM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"20-Jun-16","HourName":"12PM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"20-Jun-16","HourName":"2PM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"21-Jun-16","HourName":"9AM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"27-Jun-16","HourName":"12PM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"28-Jun-16","HourName":"10AM"},{"MemberTlmsNo":"100000041","MemberGender":"Male","MemberAge":"65","DayOfMemberDateOfBirthKey":"14-Nov-51","ContractMainCode":"DPP","PayPlanAggMonthlyTermFee":"£40.00","DayofSwipeDate":"11-Jul-16","HourName":"12PM"}]}]
-
+        $scope.data = [
+            {
+                key: "Cumulative Return",
+                values: [
+                 
+                ]
+            }
+        ]
+	
   // Second Graph
-  $scope.options2 = {
-    title: {
-      enable: true,
-      text: 'UCL-Active - 2nd example chart (This is just a demo) - made with angular-nvd3'
-    },
-    subtitle: {
-      enable: true,
-      text: 'Subtitle for simple line chart. Lorem ipsum dolor sit amet, at eam blandit sadipscing, vim adhuc sanctus disputando ex, cu usu affert alienum urbanitas.',
-      css: {
-        'text-align': 'center',
-        'margin': '10px 13px 0px 7px'
-      }
-    },
-    caption: {
-      enable: true,
-      html: '<b>Figure 2.</b> INSERT DESCRIPTION HERE OF WHAT\'S HAPPENING IN THE FIGURE',
-      css: {
-        'text-align': 'justify',
-        'margin': '10px 13px 0px 7px'
-      }
-    },
+ $scope.options2 = {
+		title: {
+			enable: true,
+			text: 'UCL-Active - Top 10 active members'
+		},
+		subtitle: {
+			enable: true,
+			text: 'The graph displays how many members have the most number of swipes in the given month.',
+			css: {
+				'text-align': 'center',
+				'margin': '10px 13px 0px 7px'
+			}
+		},
+		caption: {
+			enable: true,
+			html: '<b>Figure 1</b>',
+			css: {
+				'text-align': 'center',
+				'margin': '10px 13px 0px 7px'
+			}
+		},
+              chart: {
+                  type: 'discreteBarChart',
+                  height: 450,
+                  margin : {
+                      top: 20,
+                      right: 20,
+                      bottom: 50,
+                      left: 70
+                  },
+                  x: function(d){return d.nrOfGymSwipes;},
+                  y: function(d){return d.nrOfMembers + (1e-10);},
+                  showValues: true,
+                  valueFormat: function(d){
+                      return d3.format(",d")(d);
+                  },
+                  duration: 500,
+                  xAxis: {
+                      axisLabel: 'Nr of Gym Swipes'
+                  },
+                  yAxis: {
+                      axisLabel: 'Nr of Members',
+                      axisLabelDistance: 10
+                  }
+              }
+          };
 
-    chart: {
-      type: 'lineChart',
-      height: 450,
-      margin: {
-        top: 20,
-        right: 20,
-        bottom: 40,
-        left: 55
-      },
-      x: function(d) {
-        return d.x;
-      },
-      y: function(d) {
-        return d.y;
-      },
-      useInteractiveGuideline: true,
-      dispatch: {
-        stateChange: function(e) {
-          console.log("stateChange");
-        },
-        changeState: function(e) {
-          console.log("changeState");
-        },
-        tooltipShow: function(e) {
-          console.log("tooltipShow");
-        },
-        tooltipHide: function(e) {
-          console.log("tooltipHide");
-        }
-      },
-      xAxis: {
-        axisLabel: 'Time (ms)'
-      },
-      yAxis: {
-        axisLabel: 'Voltage (v)',
-        tickFormat: function(d) {
-          return d3.format('.02f')(d);
-        },
-        axisLabelDistance: -10
-      },
-      callback: function(chart) {
-        console.log("!!! lineChart callback !!!");
-      }
-    }
-  };
-
-  $scope.data2 = sinAndCos();
+        $scope.data2 = [
+            {
+                key: "Cumulative Return",
+                values: [
+                 
+                ]
+            }
+        ]
 
   /*Random Data Generator */
   function sinAndCos() {
