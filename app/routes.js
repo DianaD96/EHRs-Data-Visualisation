@@ -47,6 +47,7 @@ app.all('*', function(req, res,next) {
 var dataController = "test";
 var dataController2 = "test";
 var nrOfSwipes = "test";
+var userRank = "test";
 
 module.exports = function(app) {
 
@@ -95,7 +96,7 @@ module.exports = function(app) {
 		  console.log("This is your request: ", request.body);
 
 		  nrOfSwipes = request.body;
-		  console.log(">nrOfSwipes: ", nrOfSwipes);
+		  console.log("nrOfSwipes: ", nrOfSwipes);
 		  response.send(request.body);
 		}else{
 		  response.send(" Error code: " + response.statusCode);
@@ -103,7 +104,26 @@ module.exports = function(app) {
 	});
 
 	app.post('/sendNrOfSwipes', function(request, response) {
-		console.log(">nrOfSwipes: ", nrOfSwipes);
+		console.log("nrOfSwipes: ", nrOfSwipes);
 		response.send(nrOfSwipes);
+	});
+	
+	app.post('/getUserRank', function(request, response) {
+		if(response.statusCode == 200) { 
+
+		  console.log("In routes.js TESTING......")
+		  console.log("This is your request: ", request.body);
+
+		  userRank = request.body;
+		  console.log("userRank: ", userRank);
+		  response.send(request.body);
+		}else{
+		  response.send(" Error code: " + response.statusCode);
+		}
+	});
+
+	app.post('/sendUserRank', function(request, response) {
+		console.log("userRank: ", userRank);
+		response.send(userRank);
 	});
 };

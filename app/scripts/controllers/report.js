@@ -7,7 +7,7 @@ var findUserRank = 'http://localhost:3000/findUserRank';
 var monthlyStatisticsLeast = 'http://localhost:3000/monthlyStatisticsLeast';
 var monthlyStatisticsTop = 'http://localhost:3000/monthlyStatisticsTop'
 var getNeighbouringValues = 'http://localhost:3000/getNeighbouringValues';
-
+var getUserRank = 'http://localhost:3000/findUserRank';
 
 angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter, NgTableParams) {
   
@@ -61,6 +61,7 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
 		getFirstGraphQuery(queryData, monthlyStatisticsLeast);
 		getSecondGraphQuery(queryData, monthlyStatisticsTop);
 		getNrOfSwipesQuery(queryData, getNrOfSwipes);
+		getUserRankQuery(queryData, getUserRank);
 	};	
 	
 	$scope.show = function () {
@@ -68,6 +69,7 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
 		getFirstGraphShow();
 		getSecondGraphShow();
 		getNrOfSwipesGraph();
+		getUserRankGraph();
 	};
 	
 	function getFirstGraphQuery (queryData, queryUrl) {
@@ -165,6 +167,37 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
 			  $scope.nrOfSwipes = response.data.numberOfSwipes;
 			  
 			  console.log ("nrOfSwipes: ", $scope.nrOfSwipes);
+			
+			}).catch((err) => {
+			  //if error occurs
+			console.log('err', err.stack); });
+	}
+	
+	function getUserRankQuery (queryData, queryUrl) {
+		
+		var promise = $http({ //send query to node/express server
+			method: 'POST',
+			url: queryUrl,
+			data: queryData,
+			withCredentials: true,
+			headers: {
+                'Content-Type': 'application/json; charset=utf-8'
+			}
+		}).then(() => { //read backend response
+			console.log ("4444");
+			
+		});
+	}	
+	
+	function getUserRankGraph() {
+		$http({
+			method : "POST",
+			url : "http://localhost:9000/sendUserRank"
+			}).then((response) => {
+			  console.log("response.data: ", response.data);
+			  $scope.userRank = response.data.userRank;
+			  
+			  console.log ("userRank: ", $scope.userRank);
 			
 			}).catch((err) => {
 			  //if error occurs
