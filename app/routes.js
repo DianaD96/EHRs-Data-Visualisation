@@ -46,6 +46,7 @@ app.all('*', function(req, res,next) {
 
 var dataController = "test";
 var dataController2 = "test";
+var nrOfSwipes = "test";
 
 module.exports = function(app) {
 
@@ -85,5 +86,24 @@ module.exports = function(app) {
 	app.post('/sendToController2', function(request, response) {
 		console.log(">dataController2: ", dataController2);
 		response.send(dataController2);
+	});
+	
+	app.post('/getNrOfSwipes', function(request, response) {
+		if(response.statusCode == 200) { 
+
+		  console.log("In routes.js TESTING......")
+		  console.log("This is your request: ", request.body);
+
+		  nrOfSwipes = request.body;
+		  console.log(">nrOfSwipes: ", nrOfSwipes);
+		  response.send(request.body);
+		}else{
+		  response.send(" Error code: " + response.statusCode);
+		}
+	});
+
+	app.post('/sendNrOfSwipes', function(request, response) {
+		console.log(">nrOfSwipes: ", nrOfSwipes);
+		response.send(nrOfSwipes);
 	});
 };

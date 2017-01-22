@@ -11,7 +11,7 @@ var getNeighbouringValues = 'http://localhost:3000/getNeighbouringValues';
 
 angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter, NgTableParams) {
   
-
+	$scope.myvalue = false;
 
 	var self = this;
 	$scope.data = [{name: "Moroni1", age: 50}, {name: "John2", age: 20},{name: "Moroni3", age: 50}, {name: "John4", age: 20},{name: "Moroni5", age: 50}, {name: "John6", age: 20},{name: "Moroni7", age: 50}, {name: "John8", age: 20},{name: "Moroni9", age: 50}, {name: "John10", age: 20},{name: "Moroni11", age: 50}, {name: "John12", age: 20} /*,*/];
@@ -60,11 +60,14 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
 		
 		getFirstGraphQuery(queryData, monthlyStatisticsLeast);
 		getSecondGraphQuery(queryData, monthlyStatisticsTop);
+		getNrOfSwipesQuery(queryData, getNrOfSwipes);
 	};	
 	
 	$scope.show = function () {
+		$scope.myvalue = true;
 		getFirstGraphShow();
 		getSecondGraphShow();
+		getNrOfSwipesGraph();
 	};
 	
 	function getFirstGraphQuery (queryData, queryUrl) {
@@ -131,6 +134,37 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
                 key: "Cumulative Return",
                 values: $scope.dataResponse2
             }]
+			
+			}).catch((err) => {
+			  //if error occurs
+			console.log('err', err.stack); });
+	}
+	
+	function getNrOfSwipesQuery (queryData, queryUrl) {
+		
+		var promise = $http({ //send query to node/express server
+			method: 'POST',
+			url: queryUrl,
+			data: queryData,
+			withCredentials: true,
+			headers: {
+                'Content-Type': 'application/json; charset=utf-8'
+			}
+		}).then(() => { //read backend response
+			console.log ("33333");
+			
+		});
+	}	
+	
+	function getNrOfSwipesGraph() {
+		$http({
+			method : "POST",
+			url : "http://localhost:9000/sendNrOfSwipes"
+			}).then((response) => {
+			  console.log("responde.data: ", response.data);
+			  $scope.nrOfSwipes = response.data.numberOfSwipes;
+			  
+			  console.log ("nrOfSwipes: ", $scope.nrOfSwipes);
 			
 			}).catch((err) => {
 			  //if error occurs
