@@ -1,29 +1,31 @@
 <html ng-app="yapp">
 <base href="http://uclactive.westeurope.cloudapp.azure.com:3000">
-    <head>
-      <meta charset="utf-8">
-      <!-- it's important for d3.js -->
-      <script src="bower_components/angular/angular.js"></script>
-      <script src="bower_components/d3/d3.js"></script>
-      <script src="bower_components/nvd3/nv.d3.js"></script>
-      <!-- or use another assembly -->
-      <script src="bower_components/angular-nvd3/dist/angular-nvd3.js"></script>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.css" />
-	  
-	  <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.2/angular.js"></script>
-	  <link rel="stylesheet"; href="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.css">
-	  <script src="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.js"></script>	
-    </head>
 
-    <body ng-controller="ReportCtrl"> 
-      <a ui-sref="overview" class="pull-right btn btn-primary btn-outline btn-rounded">Back to Overview</a>
-      <h2>Reports</h2>
-      <span class="glyphicon glyphicon-grain bg-fade"></span>
+<head>
+    <meta charset="utf-8">
+    <!-- it's important for d3.js -->
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/d3/d3.js"></script>
+    <script src="bower_components/nvd3/nv.d3.js"></script>
+    <!-- or use another assembly -->
+    <script src="bower_components/angular-nvd3/dist/angular-nvd3.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.css" />
 
-        <p>Search Criteria </p>
-        <p>MemberNo: </p> <p><input type="text" ng-model="memberNo"></p>
-		
-	    <!-- Table 
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.2/angular.js"></script>
+    <link rel="stylesheet" ; href="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.css">
+    <script src="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.js"></script>
+</head>
+
+<body ng-controller="ReportCtrl">
+    <a ui-sref="overview" class="pull-right btn btn-primary btn-outline btn-rounded">Back to Overview</a>
+    <h2>Reports</h2>
+    <span class="glyphicon glyphicon-grain bg-fade"></span>
+
+    <p>Search Criteria </p>
+    <p>MemberNo: </p>
+    <p><input type="text" ng-model="memberNo"></p>
+
+    <!-- Table
 		<table ng-table="tableParams" class="table table-condensed table-bordered table-striped" show-filter="true">
 			<tr ng-repeat="user in $data">
 				<td data-title="'Name'" filter="{ name: 'text'}" sortable="'name'">
@@ -34,35 +36,56 @@
 		</table>
 		-->
 
-        <p>Month:
+    <p>Month:
         <div class="row">
             <div class="col-md-6">
                 <p class="input-group">
-                  <input type="text" class="form-control" uib-datepicker-popup="{{format}}" datepicker-mode="'month'" close-on-date-selection="true" show-weeks="false" ng-model="dt" is-open="popup1.opened" min-date="minDate" max-date="maxDate" datepicker-options="{minMode: 'month'}" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
-                  <span class="input-group-btn">
+                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}" datepicker-mode="'month'" close-on-date-selection="true" show-weeks="false" ng-model="dt" is-open="popup1.opened" min-date="minDate" max-date="maxDate" datepicker-options="{minMode: 'month'}"
+                        date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+                    <span class="input-group-btn">
                     <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
                   </span>
                 </p>
             </div>
-        </div> </p>
+        </div>
+    </p>
 
-		
-        <pre>Query Data: <p></p> MemberNo: <em ng-bind="memberNo"></em> <p></p> Month: <em>{{dt | date:'yyyy-MMMM' }}</em></pre>
-        <button type="button" class="btn btn-sm btn-info" ng-click="today()">Today</button>
-        <button type="button" class="btn btn-sm btn-danger" ng-click="clear()">Clear</button>
-        <p></p>
 
-      <button ng-click="query()">Query Data</button>	
+    <pre>Query Data: <p></p> MemberNo: <em ng-bind="memberNo"></em> <p></p> Month: <em>{{dt | date:'yyyy-MMMM' }}</em></pre>
+    <button type="button" class="btn btn-sm btn-info" ng-click="today()">Today</button>
+    <button type="button" class="btn btn-sm btn-danger" ng-click="clear()">Clear</button>
+    <p></p>
 
-    <!-- <div id = "chart1">
-      <svg></svg>
-    </div> -->
+    <button ng-click="query()">Query Data</button>
+    <button ng-click="show()">Show Data</button>
+    <button ng-click="sendEmail()">Send Email</button>
+    <!--
+      <p> {{dataResponse}} </p>
+	  <p> {{dataResponse2}} </p>
+	  -->
+
+    <div style="text-align:center" ng-show="myvalue" class="jumbotron">
+        <p> Your Number of Swipes in <em>{{dt | date:'MMMM' }}</em>: {{nrOfSwipes}} </p>
+    </div>
+
+    <div style="text-align:center" ng-show="myvalue" class="jumbotron">
+        <p> Your User Rank in <em>{{dt | date:'MMMM' }}</em>: {{userRank}} </p>
+    </div>
     <!--   <p>Data: {{jsonData}}</p> -->
-      <div class="jumbotron"> <nvd3 options="options1" data="jsonData"></nvd3> </div>
-      <div class="jumbotron"> <nvd3 options="options2" data="data2"></nvd3> </div>
-      <div class="jumbotron"> <nvd3 options="options3" data="data3"></nvd3> </div>
-      <div class="jumbotron"> <nvd3 options="options4" data="data4"></nvd3> </div>
-      <div class="jumbotron"> <nvd3 options="options5" data="data5"></nvd3> </div>
-    </body>
+    <div ng-show="myvalue" class="jumbotron">
+        <nvd3 options="options1" data="data1"></nvd3>
+    </div>
+    <div ng-show="myvalue" class="jumbotron">
+        <nvd3 options="options2" data="data2"></nvd3>
+    </div>
+    <div ng-show="myvalue" class="jumbotron">
+        <nvd3 options="options3" data="data3"></nvd3>
+    </div>
+    <!--
+      <div ng-show="myvalue" class="jumbotron"> <nvd3 options="options3" data="data3"></nvd3> </div>
+      <div ng-show="myvalue" class="jumbotron"> <nvd3 options="options4" data="data4"></nvd3> </div>
+      <div ng-show="myvalue" class="jumbotron"> <nvd3 options="options5" data="data5"></nvd3> </div>
+	  -->
+</body>
 
-    </html>
+</html>
