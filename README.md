@@ -14,7 +14,8 @@ Developed as a third year project.
 - `npm install body-parser`
 - `npm install method-override`
 - `npm install morgan`
-- `npm install cookie-parser
+- `npm install cookie-parser`
+- `npm install sendgrid` - [get your API key](https://sendgrid.com/)
 - `bower install angular-nvd3`
 - `gulp serve` - For development mode
 - `gulp build` - concat, minify and generate the files for deployment
