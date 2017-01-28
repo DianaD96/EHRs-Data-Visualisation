@@ -6,7 +6,6 @@ var path = require('path');
 var app = require('express')(); // Require Express module
 var http = require('http').Server(app); // Http server
 var bodyParser = require("body-parser"); // Require Body parser module
-var nodemailer = require('nodemailer');
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -46,31 +45,54 @@ app.all('*', function(req, res, next) {
   }
 });
 
+
 var dataController = "test";
 var dataController2 = "test";
 var nrOfSwipes = "test";
 var userRank = "test";
 var neighbouringVaues = "test";
 
-var helper = require('sendgrid').mail;
-var from_email = new helper.Email('developerdd15@gmail.com');
-var to_email = new helper.Email('zcabdad@ucl.ac.uk');
-var subject = 'Hello World from the SendGrid Node.js Library!';
-var content = new helper.Content('text/plain', 'Hello, Email!');
-var mail = new helper.Mail(from_email, subject, to_email, content);
 
-var sg = require('sendgrid')("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");
+
+const SENDGRID_API_KEY = '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';
+const MY_TEMPLATE_ID = '45b2e979-8c5a-4814-8bb0-81ce849b0ca3';
+
+var sg = require('sendgrid')(SENDGRID_API_KEY);
+const test = 'dsadsadas'
 
 module.exports = function(app) {
 
   app.post('/sendEmail', function(request, response) {
+    const var1 = JSON.stringify(nrOfSwipes.numberOfSwipes);
+    const var2 = JSON.stringify(userRank.userRank);
+
     var request = sg.emptyRequest({
       method: 'POST',
       path: '/v3/mail/send',
-      body: mail.toJSON(),
+      body: {
+        personalizations: [{
+          to: [{
+            email: 'zcabdad@ucl.ac.uk',
+          }, ],
+          subject: 'Hello World from the SendGrid Node.js Library!',
+          substitutions: {
+            "%name%": "John",
+            "%swipes%": `${var1}`,
+            "%rank%": `${var2}`
+          },
+        }, ],
+        from: {
+          email: 'developerdd15@gmail.com'
+        },
+        template_id: MY_TEMPLATE_ID,
+      },
     });
 
+    //With callback
     sg.API(request, function(error, response) {
+      if (error) {
+        console.log('Error response received');
+      }
       console.log(response.statusCode);
       console.log(response.body);
       console.log(response.headers);
