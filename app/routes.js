@@ -65,6 +65,12 @@ module.exports = function(app) {
   app.post('/sendEmail', function(request, response) {
     const var1 = JSON.stringify(nrOfSwipes.numberOfSwipes);
     const var2 = JSON.stringify(userRank.userRank);
+    const var3 = JSON.stringify(request.body.link1);
+    const var4 = JSON.stringify(request.body.link2);
+
+    console.log("TEST:", request.body.link1);
+    console.log("TEST:", request.body.link2);
+
 
     var request = sg.emptyRequest({
       method: 'POST',
@@ -74,11 +80,13 @@ module.exports = function(app) {
           to: [{
             email: 'zcabdad@ucl.ac.uk',
           }, ],
-          subject: 'Hello World from the SendGrid Node.js Library!',
+          subject: 'Nuffield Health - Your Last Month Progress',
           substitutions: {
             "%name%": "John",
             "%swipes%": `${var1}`,
-            "%rank%": `${var2}`
+            "%rank%": `${var2}`,
+            "%link1%": `${var3}`,
+            "%link2%": `${var4}`
           },
         }, ],
         from: {
@@ -97,6 +105,8 @@ module.exports = function(app) {
       console.log(response.body);
       console.log(response.headers);
     });
+
+
   });
 
   app.post('/getQueryJson', function(request, response) {

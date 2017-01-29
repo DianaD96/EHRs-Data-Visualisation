@@ -49,7 +49,11 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
   $scope.sendEmail = function() {
     $http({
       method: "POST",
-      url: "http://localhost:9000/sendEmail"
+      url: "http://localhost:9000/sendEmail",
+      data: {
+        link1: $scope.link1,
+        link2: $scope.link2
+      }
     }).then((response) => {
       console.log("responde.data: ", response.data);
     }).catch((err) => {
@@ -342,6 +346,59 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
     });
   }
 
+  $scope.save_btn = function() {
+    save_chart($('#container').highcharts(), 'chart');
+    save_chart2($('#container2').highcharts(), 'chart');
+  };
+
+  EXPORT_WIDTH = 1000;
+
+  $scope.link1 = '';
+  $scope.link2 = '';
+
+  function save_chart(chart, filename) {
+    var data = {
+      options: JSON.stringify($chartConfig),
+      filename: filename,
+      type: 'image/png',
+      async: true
+    };
+
+    var exportUrl = 'http://export.highcharts.com/';
+    $.post(exportUrl, data, function(data) {
+        url = exportUrl + data;
+        console.log('inside: ', url);
+        $scope.link1 = url;
+        console.log("inside2: ", $scope.link1);
+        //window.open(url);
+      })
+      .done(function() {
+        console.log("after: ", $scope.link1);
+      });
+  }
+
+  function save_chart2(chart, filename) {
+    var data = {
+      options: JSON.stringify($chartConfig2),
+      filename: filename,
+      type: 'image/png',
+      async: true
+    };
+
+    var exportUrl = 'http://export.highcharts.com/';
+    $.post(exportUrl, data, function(data) {
+        url = exportUrl + data;
+        console.log('inside: ', url);
+        $scope.link2 = url;
+        console.log("inside2: ", $scope.link2);
+        //window.open(url);
+      })
+      .done(function() {
+        console.log("after: ", $scope.link2);
+      });
+  }
+
+
   // Date Picker Function
   $scope.popup1 = {
     opened: false
@@ -593,84 +650,5 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
         });
         })
   */
-  $scope.save_btn = function() {
-    save_chart($('#container').highcharts(), 'chart');
-  };
-
-  EXPORT_WIDTH = 1000;
-
-  function save_chart(chart, filename) {
-    var data = {
-      options: JSON.stringify($chartConfig),
-      filename: filename,
-      type: 'image/png',
-      async: true
-    };
-
-    var exportUrl = 'http://export.highcharts.com/';
-    $.post(exportUrl, data, function(data) {
-      var url = exportUrl + data;
-      window.open(url);
-    });
-  }
-
-  // Second Graph
-  $scope.options2 = {
-    title: {
-      enable: true,
-      text: 'UCL-Active - Top 10 active members'
-    },
-    subtitle: {
-      enable: true,
-      text: 'The graph displays how many members have the most number of swipes in the given month.',
-      css: {
-        'text-align': 'center',
-        'margin': '10px 13px 0px 7px'
-      }
-    },
-    caption: {
-      enable: true,
-      html: '<b>Figure 1</b>',
-      css: {
-        'text-align': 'center',
-        'margin': '10px 13px 0px 7px'
-      }
-    },
-    chart: {
-      type: 'discreteBarChart',
-      height: 450,
-      margin: {
-        top: 20,
-        right: 20,
-        bottom: 50,
-        left: 70
-      },
-      x: function(d) {
-        return d.nrOfGymSwipes;
-      },
-      y: function(d) {
-        return d.nrOfMembers + (1e-10);
-      },
-      showValues: true,
-      valueFormat: function(d) {
-        return d3.format(",d")(d);
-      },
-      duration: 500,
-      xAxis: {
-        axisLabel: 'Nr of Gym Swipes'
-      },
-      yAxis: {
-        axisLabel: 'Nr of Members',
-        axisLabelDistance: 10
-      }
-    }
-  };
-
-  $scope.data2 = [{
-    key: "Cumulative Return",
-    values: [
-
-    ]
-  }]
 
 });
