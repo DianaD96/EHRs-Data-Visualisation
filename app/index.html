@@ -1,7 +1,8 @@
 <!doctype html>
 <html class="no-js">
-  <head>
-    <meta charset="utf-8"> 
+
+<head>
+    <meta charset="utf-8">
     <title>EHRs Data Visualisation</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
@@ -13,26 +14,28 @@
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
-  </head>
-  <body ng-app="yapp">
+</head>
+
+<body ng-app="yapp">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
     <!-- Add your site or application content here -->
     <div class="">
-      <div ui-view></div>
+        <div ui-view></div>
     </div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
-     <script> /*
-       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    <script>
+        /*
+                               (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                               (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                               m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                               })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-       ga('create', 'UA-XXXXX-X');
-       ga('send', 'pageview'); */
+                               ga('create', 'UA-XXXXX-X');
+                               ga('send', 'pageview'); */
     </script>
 
     <!-- build:js scripts/oldieshim.js -->
@@ -41,38 +44,43 @@
     <script src="../bower_components/json3/lib/json3.js"></script>
     <![endif]-->
     <!-- endbuild -->
-	
-	<!-- build:js scripts/vendor.js -->
+
+    <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
     <script src="../bower_components/angular/angular.js"></script>
     <script src="../bower_components/angular-mocks/angular-mocks.js"></script>
     <script src="../bower_components/ui-router/release/angular-ui-router.js"></script>
     <script src="../bower_components/angular-animate/angular-animate.js"></script>
-    <meta charset="utf-8">  <!-- it's important for d3.js -->
+    <meta charset="utf-8">
+    <!-- it's important for d3.js -->
     <script src="bower_components/d3/d3.js"></script>
-    <script src="bower_components/nvd3/build/nv.d3.js"></script> <!-- or use another assembly -->
+    <script src="bower_components/nvd3/build/nv.d3.js"></script>
+    <!-- or use another assembly -->
     <script src="bower_components/angular-nvd3/dist/angular-nvd3.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
-	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.js"></script>
     <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-1.0.3.js"></script>
-	
+
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="scripts/app.js"></script>
     <script src="scripts/controllers/login.js"></script>
     <script src="scripts/controllers/dashboard.js"></script>
     <script src="scripts/controllers/report.js"></script>
     <!-- endbuild -->
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.2/angular.js"></script>
-	<link rel="stylesheet"; href="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.css">
-	<script src="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.js"></script>
-	
-	<!-- TABLE -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.2/angular.js"></script>
+    <link rel="stylesheet" ; href="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.css">
+    <script src="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.js"></script>
 
-	</body>
+    <!-- TABLE -->
+
+</body>
+
 </html>

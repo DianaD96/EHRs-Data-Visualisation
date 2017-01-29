@@ -87,7 +87,6 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
   };
 
   function getFirstGraphQuery(queryData, queryUrl) {
-
     var promise = $http({ //send query to node/express server
       method: 'POST',
       url: queryUrl,
@@ -98,9 +97,10 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
       }
     }).then(() => { //read backend response
       console.log("11111111");
-
     });
   }
+
+  $scope.gymSwipes_json = new Array();
 
   function getFirstGraphShow() {
     $http({
@@ -111,10 +111,12 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
       $scope.dataResponse = response.data;
       console.log("1st graph", $scope.dataResponse);
 
-      $scope.data1 = [{
-        key: "Cumulative Return",
-        values: $scope.dataResponse
-      }]
+      for (i = 0; i < $scope.dataResponse.length; i++) {
+        var aux = [$scope.dataResponse[i].nrOfGymSwipes, $scope.dataResponse[i].nrOfMembers];
+        $scope.gymSwipes_json.push(aux);
+      }
+      console.log("JSON: ", $scope.gymSwipes_json);
+      showGraph1($scope.gymSwipes_json);
 
     }).catch((err) => {
       //if error occurs
@@ -136,6 +138,8 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
     });
   }
 
+  $scope.gymSwipes2_json = new Array();
+
   function getSecondGraphShow() {
     $http({
       method: "POST",
@@ -143,6 +147,13 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
     }).then((response) => {
       console.log("responde.data: ", response.data);
       $scope.dataResponse2 = response.data;
+
+      for (i = 0; i < $scope.dataResponse2.length; i++) {
+        var aux = [$scope.dataResponse2[i].nrOfGymSwipes, $scope.dataResponse2[i].nrOfMembers];
+        $scope.gymSwipes2_json.push(aux);
+      }
+      console.log("JSON: ", $scope.gymSwipes2_json);
+      showGraph2($scope.gymSwipes2_json);
 
       console.log("2nd graph", $scope.dataResponse2);
       $scope.data2 = [{
@@ -157,7 +168,6 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
   }
 
   function getNrOfSwipesQuery(queryData, queryUrl) {
-
     var promise = $http({ //send query to node/express server
       method: 'POST',
       url: queryUrl,
@@ -168,7 +178,6 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
       }
     }).then(() => { //read backend response
       console.log("33333");
-
     });
   }
 
@@ -179,9 +188,7 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
     }).then((response) => {
       console.log("responde.data: ", response.data);
       $scope.nrOfSwipes = response.data.numberOfSwipes;
-
       console.log("nrOfSwipes: ", $scope.nrOfSwipes);
-
     }).catch((err) => {
       //if error occurs
       console.log('err', err.stack);
@@ -189,7 +196,6 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
   }
 
   function getUserRankQuery(queryData, queryUrl) {
-
     var promise = $http({ //send query to node/express server
       method: 'POST',
       url: queryUrl,
@@ -200,7 +206,6 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
       }
     }).then(() => { //read backend response
       console.log("4444");
-
     });
   }
 
@@ -211,9 +216,7 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
     }).then((response) => {
       console.log("response.data: ", response.data);
       $scope.userRank = response.data.userRank;
-
       console.log("userRank: ", $scope.userRank);
-
     }).catch((err) => {
       //if error occurs
       console.log('err', err.stack);
@@ -221,7 +224,6 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
   }
 
   function getNeighbouringValuesQuery(queryData, queryUrl) {
-
     var promise = $http({ //send query to node/express server
       method: 'POST',
       url: queryUrl,
@@ -232,7 +234,6 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
       }
     }).then(() => { //read backend response
       console.log("5555");
-
     });
   }
 
@@ -243,17 +244,101 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
     }).then((response) => {
       console.log("response.data: ", response.data);
       $scope.dataResponse3 = response.data;
-
-      $scope.data3 = [{
-        key: "Cumulative Return",
-        values: $scope.dataResponse2
-      }]
-
       console.log("neighbouringValues: ", $scope.data3);
-
     }).catch((err) => {
-      //if error occurs
       console.log('err', err.stack);
+    });
+  }
+
+  function showGraph1(data) {
+    $chartConfig = {
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: 'UCL-Active - Least 10 active members'
+      },
+      subtitle: {
+        text: 'The graph displays how many members have the least number of swipes in the given month'
+      },
+      xAxis: {
+        type: 'category',
+        crosshair: true
+      },
+      yAxis: {
+        min: 0,
+        title: {
+          text: 'Number of Members'
+        }
+      },
+      tooltip: {
+        headerFormat: '<span style="font-size:10px">Number of Swipes: {point.key}</span><table>',
+        pointFormat: '<tr><td style="color:{series.color};padding:0"> </td>' +
+          '<td style="padding:0"><b>{point.y:.1f} members </b></td></tr>',
+        footerFormat: '</table>',
+        shared: true,
+        useHTML: true
+      },
+      plotOptions: {
+        column: {
+          pointPadding: 0.2,
+          borderWidth: 0
+        }
+      },
+      series: [{
+        name: 'Number of Gym Swipes',
+        data: data
+      }]
+    };
+
+    $(function() {
+      Highcharts.chart('container', $chartConfig);
+    });
+  }
+
+  function showGraph2(data) {
+    $chartConfig2 = {
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: 'UCL-Active - Top 10 active members'
+      },
+      subtitle: {
+        text: 'The graph displays how many members have the most number of swipes in the given month.'
+      },
+      xAxis: {
+        type: 'category',
+        crosshair: true
+      },
+      yAxis: {
+        min: 0,
+        title: {
+          text: 'Number of Members'
+        }
+      },
+      tooltip: {
+        headerFormat: '<span style="font-size:10px">Number of Swipes: {point.key}</span><table>',
+        pointFormat: '<tr><td style="color:{series.color};padding:0"> </td>' +
+          '<td style="padding:0"><b>{point.y:.1f} members </b></td></tr>',
+        footerFormat: '</table>',
+        shared: true,
+        useHTML: true
+      },
+      plotOptions: {
+        column: {
+          pointPadding: 0.2,
+          borderWidth: 0
+        }
+      },
+      series: [{
+        name: 'Number of Gym Swipes',
+        data: data
+      }]
+    };
+
+    $(function() {
+      Highcharts.chart('container2', $chartConfig2);
     });
   }
 
@@ -508,65 +593,26 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
         });
         })
   */
-
-  // First Graph
-  $scope.options1 = {
-    title: {
-      enable: true,
-      text: 'UCL-Active - Least 10 active members'
-    },
-    subtitle: {
-      enable: true,
-      text: 'The graph displays how many members have the least number of swipes in the given month.',
-      css: {
-        'text-align': 'center',
-        'margin': '10px 13px 0px 7px'
-      }
-    },
-    caption: {
-      enable: true,
-      html: '<b>Figure 1</b>',
-      css: {
-        'text-align': 'center',
-        'margin': '10px 13px 0px 7px'
-      }
-    },
-    chart: {
-      type: 'discreteBarChart',
-      height: 450,
-      margin: {
-        top: 20,
-        right: 20,
-        bottom: 50,
-        left: 70
-      },
-      x: function(d) {
-        return d.nrOfGymSwipes;
-      },
-      y: function(d) {
-        return d.nrOfMembers + (1e-10);
-      },
-      showValues: true,
-      valueFormat: function(d) {
-        return d3.format(",d")(d);
-      },
-      duration: 500,
-      xAxis: {
-        axisLabel: 'Nr of Gym Swipes'
-      },
-      yAxis: {
-        axisLabel: 'Nr of Members',
-        axisLabelDistance: 10
-      }
-    }
+  $scope.save_btn = function() {
+    save_chart($('#container').highcharts(), 'chart');
   };
 
-  $scope.data = [{
-    key: "Cumulative Return",
-    values: [
+  EXPORT_WIDTH = 1000;
 
-    ]
-  }]
+  function save_chart(chart, filename) {
+    var data = {
+      options: JSON.stringify($chartConfig),
+      filename: filename,
+      type: 'image/png',
+      async: true
+    };
+
+    var exportUrl = 'http://export.highcharts.com/';
+    $.post(exportUrl, data, function(data) {
+      var url = exportUrl + data;
+      window.open(url);
+    });
+  }
 
   // Second Graph
   $scope.options2 = {
@@ -621,65 +667,6 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
   };
 
   $scope.data2 = [{
-    key: "Cumulative Return",
-    values: [
-
-    ]
-  }]
-
-  // Third Graph
-  $scope.options3 = {
-    title: {
-      enable: true,
-      text: 'UCL-Active - How you compare against the most/least active members'
-    },
-    subtitle: {
-      enable: true,
-      text: '',
-      css: {
-        'text-align': 'center',
-        'margin': '10px 13px 0px 7px'
-      }
-    },
-    caption: {
-      enable: true,
-      html: '<b>Figure 1</b>',
-      css: {
-        'text-align': 'center',
-        'margin': '10px 13px 0px 7px'
-      }
-    },
-    chart: {
-      type: 'discreteBarChart',
-      height: 450,
-      margin: {
-        top: 20,
-        right: 20,
-        bottom: 50,
-        left: 70
-      },
-      x: function(d) {
-        return d.nrOfGymSwipes;
-      },
-      y: function(d) {
-        return d.nrOfMembers + (1e-10);
-      },
-      showValues: true,
-      valueFormat: function(d) {
-        return d3.format(",d")(d);
-      },
-      duration: 500,
-      xAxis: {
-        axisLabel: 'Nr of Gym Swipes'
-      },
-      yAxis: {
-        axisLabel: 'Nr of Members',
-        axisLabelDistance: 10
-      }
-    }
-  };
-
-  $scope.data3 = [{
     key: "Cumulative Return",
     values: [
 

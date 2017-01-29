@@ -59,6 +59,7 @@
     <button ng-click="query()">Query Data</button>
     <button ng-click="show()">Show Data</button>
     <button ng-click="sendEmail()">Send Email</button>
+    <button ng-click="save_btn()">Save Image</button>
     <!--
       <p> {{dataResponse}} </p>
 	  <p> {{dataResponse2}} </p>
@@ -73,14 +74,12 @@
     </div>
     <!--   <p>Data: {{jsonData}}</p> -->
     <div ng-show="myvalue" class="jumbotron">
-        <nvd3 options="options1" data="data1"></nvd3>
+        <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
     </div>
     <div ng-show="myvalue" class="jumbotron">
-        <nvd3 options="options2" data="data2"></nvd3>
+        <div id="container2" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
     </div>
-    <div ng-show="myvalue" class="jumbotron">
-        <nvd3 options="options3" data="data3"></nvd3>
-    </div>
+
     <!--
       <div ng-show="myvalue" class="jumbotron"> <nvd3 options="options3" data="data3"></nvd3> </div>
       <div ng-show="myvalue" class="jumbotron"> <nvd3 options="options4" data="data4"></nvd3> </div>
