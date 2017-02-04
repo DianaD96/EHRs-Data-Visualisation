@@ -6,6 +6,13 @@ var path = require('path');
 var app = require('express')(); // Require Express module
 var http = require('http').Server(app); // Http server
 var bodyParser = require("body-parser"); // Require Body parser module
+var cloudinary = require('cloudinary');
+cloudinary.config({
+  cloud_name: 'dms8kgrx7',
+  api_key: '429963195267198',
+  api_secret: 'xjlEFGK2oJCGKH38ZEbgn03mHUU'
+});
+
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -63,6 +70,7 @@ const test = 'dsadsadas'
 module.exports = function(app) {
 
   app.post('/sendEmail', function(request, response) {
+
     const var1 = JSON.stringify(nrOfSwipes.numberOfSwipes);
     const var2 = JSON.stringify(userRank.userRank);
     const var3 = JSON.stringify(request.body.link1);
@@ -71,6 +79,15 @@ module.exports = function(app) {
     console.log("TEST:", request.body.link1);
     console.log("TEST:", request.body.link2);
 
+    cloudinary.uploader.upload(request.body.link1, function(result) {
+      var3 = JSON.stringify(result.secure_url);
+      console.log(result.secure_url)
+    });
+
+    cloudinary.uploader.upload(request.body.link2, function(result) {
+      var4 = JSON.stringify(result.secure_url);
+      console.log(result.secure_url)
+    });
 
     var request = sg.emptyRequest({
       method: 'POST',
@@ -90,7 +107,7 @@ module.exports = function(app) {
           },
         }, ],
         from: {
-          email: 'developerdd15@gmail.com'
+          email: 'NuffieldResearchGroup@nuffieldhealth.com'
         },
         template_id: MY_TEMPLATE_ID,
       },
@@ -105,7 +122,6 @@ module.exports = function(app) {
       console.log(response.body);
       console.log(response.headers);
     });
-
 
   });
 

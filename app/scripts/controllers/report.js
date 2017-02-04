@@ -257,7 +257,9 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
   function showGraph1(data) {
     $chartConfig = {
       chart: {
-        type: 'column'
+        type: 'column',
+        renderTo: 'container',
+        zoomType: 'x'
       },
       title: {
         text: 'UCL-Active - Least 10 active members'
