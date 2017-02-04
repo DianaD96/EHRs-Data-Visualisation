@@ -15,6 +15,7 @@ Developed as a third year project.
 - `npm install method-override`
 - `npm install morgan`
 - `npm install cookie-parser`
+- `npm install cloudinary`
 - `npm install sendgrid` - [get your API key](https://sendgrid.com/)
 - `bower install angular-nvd3`
 - `gulp serve` - For development mode
