@@ -65,30 +65,15 @@ const SENDGRID_API_KEY = 'SG.tR24QIARSSCFK2HPJfXCtQ.dTwrI1fi6atQsJ1mlpaPEUQzr1Gn
 const MY_TEMPLATE_ID = '45b2e979-8c5a-4814-8bb0-81ce849b0ca3';
 
 var sg = require('sendgrid')(SENDGRID_API_KEY);
-const test = 'dsadsadas'
+const test = 'dsadsadas';
+var var1;
+var var2;
+var var3;
+var var4;
 
 module.exports = function(app) {
 
   app.post('/sendEmail', function(request, response) {
-
-    const var1 = JSON.stringify(nrOfSwipes.numberOfSwipes);
-    const var2 = JSON.stringify(userRank.userRank);
-    const var3 = JSON.stringify(request.body.link1);
-    const var4 = JSON.stringify(request.body.link2);
-
-    console.log("TEST:", request.body.link1);
-    console.log("TEST:", request.body.link2);
-
-    cloudinary.uploader.upload(request.body.link1, function(result) {
-      var3 = JSON.stringify(result.secure_url);
-      console.log(result.secure_url)
-    });
-
-    cloudinary.uploader.upload(request.body.link2, function(result) {
-      var4 = JSON.stringify(result.secure_url);
-      console.log(result.secure_url)
-    });
-
     var request = sg.emptyRequest({
       method: 'POST',
       path: '/v3/mail/send',
@@ -112,7 +97,6 @@ module.exports = function(app) {
         template_id: MY_TEMPLATE_ID,
       },
     });
-
     //With callback
     sg.API(request, function(error, response) {
       if (error) {
@@ -121,6 +105,27 @@ module.exports = function(app) {
       console.log(response.statusCode);
       console.log(response.body);
       console.log(response.headers);
+    });
+  });
+
+  app.post('/saveImage', function(request, response) {
+
+    var1 = JSON.stringify(nrOfSwipes.numberOfSwipes);
+    var2 = JSON.stringify(userRank.userRank);
+
+    console.log("TEST:", request.body.link1);
+    console.log("TEST:", request.body.link2);
+
+    cloudinary.uploader.upload(request.body.link1, function(result) {
+      var3 = JSON.stringify(result.secure_url);
+      console.log(result.secure_url)
+      console.log("var3: ", var3);
+    });
+    console.log("var3", var3);
+
+    cloudinary.uploader.upload(request.body.link2, function(result) {
+      var4 = JSON.stringify(result.secure_url);
+      console.log(result.secure_url)
     });
 
   });

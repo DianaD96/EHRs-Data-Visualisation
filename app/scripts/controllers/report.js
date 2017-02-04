@@ -46,14 +46,26 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
 
   $scope.dataResponse = "";
 
-  $scope.sendEmail = function() {
+  $scope.saveImage = function() {
     $http({
       method: "POST",
-      url: "http://localhost:9000/sendEmail",
+      url: "http://localhost:9000/saveImage",
       data: {
         link1: $scope.link1,
         link2: $scope.link2
       }
+    }).then((response) => {
+      console.log("responde.data: ", response.data);
+    }).catch((err) => {
+      //if error occurs
+      console.log('err', err.stack);
+    });
+  };
+
+  $scope.sendEmail = function() {
+    $http({
+      method: "POST",
+      url: "http://localhost:9000/sendEmail",
     }).then((response) => {
       console.log("responde.data: ", response.data);
     }).catch((err) => {
