@@ -9,7 +9,7 @@ var monthlyStatisticsTop = 'http://localhost:3000/monthlyStatisticsTop'
 var getNeighbouringValues = 'http://localhost:3000/getNeighbouringValues';
 var getUserRank = 'http://localhost:3000/findUserRank';
 
-angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter, NgTableParams) {
+angular.module('yapp').controller('ReportCtrl', function($q, $scope, $http, $filter, NgTableParams) {
 
   $scope.myvalue = false;
 
@@ -46,210 +46,337 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
 
   $scope.dataResponse = "";
 
-  $scope.saveImage = function() {
-    $http({
-      method: "POST",
-      url: "http://localhost:9000/saveImage",
-      data: {
-        link1: $scope.link1,
-        link2: $scope.link2
-      }
-    }).then((response) => {
-      console.log("responde.data: ", response.data);
-    }).catch((err) => {
-      //if error occurs
-      console.log('err', err.stack);
+  function saveImage() {
+    return new Promise(function(resolve, reject) {
+      $http({
+        method: "POST",
+        url: "http://localhost:9000/saveImage",
+        data: {
+          link1: $scope.link1,
+          link2: $scope.link2
+        }
+      }).then(() => { //read backend response
+        console.log(">>>2");
+        resolve();
+      }, (error) => {
+        reject(error);
+      });
+      resolve();
     });
   };
 
-  $scope.sendEmail = function() {
-    $http({
-      method: "POST",
-      url: "http://localhost:9000/sendEmail",
-    }).then((response) => {
-      console.log("responde.data: ", response.data);
-    }).catch((err) => {
-      //if error occurs
-      console.log('err', err.stack);
+  function sendEmail() {
+    return new Promise(function(resolve, reject) {
+      $http({
+        method: "POST",
+        url: "http://localhost:9000/sendEmail",
+      }).then(() => { //read backend response
+        console.log(">>>3");
+        resolve();
+      }, (error) => {
+        reject(error);
+      });
     });
   };
+
+  //Querying and showing graphs
+  $scope.fetch = function() {
+    var deferred = $q.defer();
+    var promise = deferred.promise;
+
+    promise
+      .then(function() {
+        console.log(">>>>");
+        return query();
+      })
+      .then(function() {
+        console.log("<<<<");
+        return show();
+      });
+
+
+    deferred.resolve();
+  }
 
   // Send Query Data to NodeJs
-  $scope.query = function() {
-    console.log("I am hereee");
-    var month = ("0" + ($scope.dt.getMonth() + 1)).slice(-2);
-    var date = $scope.dt.getFullYear() + "" + month;
-    var queryData = JSON.stringify({
-      MemberID_Hash: $scope.memberNo,
-      Date_Key_Month: date
+  function query() {
+    return new Promise(function(resolve, reject) {
+
+      console.log("I am hereee");
+      var month = ("0" + ($scope.dt.getMonth() + 1)).slice(-2);
+      var date = $scope.dt.getFullYear() + "" + month;
+      var queryData = JSON.stringify({
+        MemberID_Hash: $scope.memberNo,
+        Date_Key_Month: date
+      });
+      //console.log("data: ", queryData);
+
+      var deferred = $q.defer();
+      var promise = deferred.promise;
+
+      promise
+        .then(function() {
+          console.log(">1");
+          return getFirstGraphQuery(queryData, monthlyStatisticsLeast);
+        })
+        .then(function() {
+          console.log(">2");
+          return getSecondGraphQuery(queryData, monthlyStatisticsTop);
+        })
+        .then(function() {
+          console.log(">3");
+          return getNrOfSwipesQuery(queryData, getNrOfSwipes);
+        })
+        .then(function() {
+          console.log(">4");
+          return getUserRankQuery(queryData, getUserRank);
+        })
+        .then(function() {
+          resolve();
+        });
+
+      deferred.resolve();
     });
-    console.log("data: ", queryData);
 
-
+    /*
     getFirstGraphQuery(queryData, monthlyStatisticsLeast);
     getSecondGraphQuery(queryData, monthlyStatisticsTop);
     getNrOfSwipesQuery(queryData, getNrOfSwipes);
     getUserRankQuery(queryData, getUserRank);
+    */
     //getNeighbouringValuesQuery(queryData, getNeighbouringValues);
+
   };
 
-  $scope.show = function() {
-    $scope.myvalue = true;
-    getFirstGraphShow();
-    getSecondGraphShow();
-    getNrOfSwipesGraph();
-    getUserRankGraph();
-    //getNeighbouringValuesGraph();
+  function show() {
+
+    return new Promise(function(resolve, reject) {
+
+      $scope.myvalue = true;
+
+      var deferred = $q.defer();
+      var promise = deferred.promise;
+
+      promise
+        .then(function() {
+          console.log("<1");
+          getFirstGraphShow();
+        })
+        .then(function() {
+          console.log("<2");
+          getSecondGraphShow();
+        })
+        .then(function() {
+          console.log("<3");
+          getNrOfSwipesGraph();
+        })
+        .then(function() {
+          console.log("<4");
+          getUserRankGraph();
+        });
+
+      deferred.resolve();
+
+      //getNeighbouringValuesGraph();
+
+      resolve();
+    });
+
   };
 
   function getFirstGraphQuery(queryData, queryUrl) {
-    var promise = $http({ //send query to node/express server
-      method: 'POST',
-      url: queryUrl,
-      data: queryData,
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8'
-      }
-    }).then(() => { //read backend response
-      console.log("11111111");
+    return new Promise(function(resolve, reject) {
+
+      var promise = $http({ //send query to node/express server
+        method: 'POST',
+        url: queryUrl,
+        data: queryData,
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        }
+      }).then(() => { //read backend response
+        console.log("11111111");
+        resolve();
+      }, (error) => {
+        reject(error);
+      });
     });
   }
 
   $scope.gymSwipes_json = new Array();
 
   function getFirstGraphShow() {
-    $http({
-      method: "POST",
-      url: "http://localhost:9000/sendToController"
-    }).then((response) => {
-      console.log("responde.data: ", response.data);
-      $scope.dataResponse = response.data;
-      console.log("1st graph", $scope.dataResponse);
+    return new Promise(function(resolve, reject) {
+      $http({
+        method: "POST",
+        url: "http://localhost:9000/sendToController"
+      }).then((response) => {
+        //console.log("responde.data: ", response.data);
+        $scope.dataResponse = response.data;
+        console.log("1st graph");
 
-      for (i = 0; i < $scope.dataResponse.length; i++) {
-        var aux = [$scope.dataResponse[i].nrOfGymSwipes, $scope.dataResponse[i].nrOfMembers];
-        $scope.gymSwipes_json.push(aux);
-      }
-      console.log("JSON: ", $scope.gymSwipes_json);
-      showGraph1($scope.gymSwipes_json);
-
-    }).catch((err) => {
-      //if error occurs
-      console.log('err', err.stack);
+        for (i = 0; i < $scope.dataResponse.length; i++) {
+          var aux = [$scope.dataResponse[i].nrOfGymSwipes, $scope.dataResponse[i].nrOfMembers];
+          $scope.gymSwipes_json.push(aux);
+        }
+        //console.log("JSON: ", $scope.gymSwipes_json);
+        showGraph1($scope.gymSwipes_json);
+        resolve();
+      }).catch((err) => {
+        //if error occurs
+        reject();
+        console.log('err', err.stack);
+      });
     });
   }
 
   function getSecondGraphQuery(queryData, queryUrl) {
-    var promise = $http({ //send query to node/express server
-      method: 'POST',
-      url: queryUrl,
-      data: queryData,
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8'
-      }
-    }).then(() => { //read backend response
-      console.log("2222222222222");
+    return new Promise(function(resolve, reject) {
+
+      var promise = $http({ //send query to node/express server
+        method: 'POST',
+        url: queryUrl,
+        data: queryData,
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        }
+      }).then(() => { //read backend response
+        console.log("2222222222222");
+        resolve();
+      }, (error) => {
+        reject(error);
+      });
     });
   }
 
   $scope.gymSwipes2_json = new Array();
 
   function getSecondGraphShow() {
-    $http({
-      method: "POST",
-      url: "http://localhost:9000/sendToController2"
-    }).then((response) => {
-      console.log("responde.data: ", response.data);
-      $scope.dataResponse2 = response.data;
+    return new Promise(function(resolve, reject) {
 
-      for (i = 0; i < $scope.dataResponse2.length; i++) {
-        var aux = [$scope.dataResponse2[i].nrOfGymSwipes, $scope.dataResponse2[i].nrOfMembers];
-        $scope.gymSwipes2_json.push(aux);
-      }
-      console.log("JSON: ", $scope.gymSwipes2_json);
-      showGraph2($scope.gymSwipes2_json);
+      $http({
+        method: "POST",
+        url: "http://localhost:9000/sendToController2"
+      }).then((response) => {
+        //console.log("responde.data: ", response.data);
+        $scope.dataResponse2 = response.data;
 
-      console.log("2nd graph", $scope.dataResponse2);
-      $scope.data2 = [{
-        key: "Cumulative Return",
-        values: $scope.dataResponse2
-      }]
+        for (i = 0; i < $scope.dataResponse2.length; i++) {
+          var aux = [$scope.dataResponse2[i].nrOfGymSwipes, $scope.dataResponse2[i].nrOfMembers];
+          $scope.gymSwipes2_json.push(aux);
+        }
+        //console.log("JSON: ", $scope.gymSwipes2_json);
+        showGraph2($scope.gymSwipes2_json);
 
-    }).catch((err) => {
-      //if error occurs
-      console.log('err', err.stack);
+        console.log("2nd graph");
+        $scope.data2 = [{
+          key: "Cumulative Return",
+          values: $scope.dataResponse2
+        }]
+
+        resolve();
+      }).catch((err) => {
+        //if error occurs
+        reject();
+        console.log('err', err.stack);
+      });
+
     });
   }
 
   function getNrOfSwipesQuery(queryData, queryUrl) {
-    var promise = $http({ //send query to node/express server
-      method: 'POST',
-      url: queryUrl,
-      data: queryData,
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8'
-      }
-    }).then(() => { //read backend response
-      console.log("33333");
+    return new Promise(function(resolve, reject) {
+
+
+      var promise = $http({ //send query to node/express server
+        method: 'POST',
+        url: queryUrl,
+        data: queryData,
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        }
+      }).then(() => { //read backend response
+        console.log("33333");
+        resolve();
+      }, (error) => {
+        reject(error);
+      });
     });
   }
 
   function getNrOfSwipesGraph() {
-    $http({
-      method: "POST",
-      url: "http://localhost:9000/sendNrOfSwipes"
-    }).then((response) => {
-      console.log("responde.data: ", response.data);
-      $scope.nrOfSwipes = response.data.numberOfSwipes;
-      console.log("nrOfSwipes: ", $scope.nrOfSwipes);
-    }).catch((err) => {
-      //if error occurs
-      console.log('err', err.stack);
+    return new Promise(function(resolve, reject) {
+      $http({
+        method: "POST",
+        url: "http://localhost:9000/sendNrOfSwipes"
+      }).then((response) => {
+        //console.log("responde.data: ", response.data);
+        $scope.nrOfSwipes = response.data.numberOfSwipes;
+        console.log("3rd graph: ");
+        resolve();
+      }).catch((err) => {
+        //if error occurs
+        reject();
+        console.log('err', err.stack);
+      });
     });
   }
 
   function getUserRankQuery(queryData, queryUrl) {
-    var promise = $http({ //send query to node/express server
-      method: 'POST',
-      url: queryUrl,
-      data: queryData,
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8'
-      }
-    }).then(() => { //read backend response
-      console.log("4444");
+    return new Promise(function(resolve, reject) {
+
+      var promise = $http({ //send query to node/express server
+        method: 'POST',
+        url: queryUrl,
+        data: queryData,
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        }
+      }).then(() => { //read backend response
+        console.log("4444");
+        resolve();
+      }, (error) => {
+        reject(error);
+      });
     });
   }
 
   function getUserRankGraph() {
-    $http({
-      method: "POST",
-      url: "http://localhost:9000/sendUserRank"
-    }).then((response) => {
-      console.log("response.data: ", response.data);
-      $scope.userRank = response.data.userRank;
-      console.log("userRank: ", $scope.userRank);
-    }).catch((err) => {
-      //if error occurs
-      console.log('err', err.stack);
+    return new Promise(function(resolve, reject) {
+      $http({
+        method: "POST",
+        url: "http://localhost:9000/sendUserRank"
+      }).then((response) => {
+        //  console.log("response.data: ", response.data);
+        $scope.userRank = response.data.userRank;
+        console.log("4th garph: ");
+        resolve();
+      }).catch((err) => {
+        //if error occurs
+        reject();
+        console.log('err', err.stack);
+      });
     });
   }
 
   function getNeighbouringValuesQuery(queryData, queryUrl) {
-    var promise = $http({ //send query to node/express server
-      method: 'POST',
-      url: queryUrl,
-      data: queryData,
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8'
-      }
-    }).then(() => { //read backend response
-      console.log("5555");
+    return new Promise(function(resolve, reject) {
+      var promise = $http({ //send query to node/express server
+        method: 'POST',
+        url: queryUrl,
+        data: queryData,
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        }
+      }).then(() => { //read backend response
+        console.log("5555");
+      });
+      resolve();
     });
   }
 
@@ -360,9 +487,49 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
     });
   }
 
-  $scope.save_btn = function() {
-    save_chart($('#container').highcharts(), 'chart');
-    save_chart2($('#container2').highcharts(), 'chart');
+  $scope.save = function() {
+    var deferred = $q.defer();
+    var promise = deferred.promise;
+
+    promise
+      .then(function() {
+        console.log(">>1");
+        return save_btn();
+      })
+      .then(function() {
+        console.log(">>2");
+        return saveImage();
+      })
+      .then(function() {
+        console.log(">>3");
+        return sendEmail();
+      });
+
+
+    deferred.resolve();
+  };
+
+  function save_btn() {
+    return new Promise(function(resolve, reject) {
+
+      var deferred = $q.defer();
+      var promise = deferred.promise;
+
+      promise
+        .then(function() {
+          console.log(">>>1");
+          return save_chart($('#container').highcharts(), 'chart');;
+        })
+        .then(function() {
+          console.log(">>>2");
+          return save_chart2($('#container2').highcharts(), 'chart');;
+        })
+        .then(function() {
+          resolve();
+        });
+
+      deferred.resolve();
+    });
   };
 
   EXPORT_WIDTH = 1000;
@@ -371,45 +538,51 @@ angular.module('yapp').controller('ReportCtrl', function($scope, $http, $filter,
   $scope.link2 = '';
 
   function save_chart(chart, filename) {
-    var data = {
-      options: JSON.stringify($chartConfig),
-      filename: filename,
-      type: 'image/png',
-      async: true
-    };
+    return new Promise(function(resolve, reject) {
+      var data = {
+        options: JSON.stringify($chartConfig),
+        filename: filename,
+        type: 'image/png',
+        async: true
+      };
 
-    var exportUrl = 'http://export.highcharts.com/';
-    $.post(exportUrl, data, function(data) {
-        url = exportUrl + data;
-        console.log('inside: ', url);
-        $scope.link1 = url;
-        console.log("inside2: ", $scope.link1);
-        //window.open(url);
-      })
-      .done(function() {
-        console.log("after: ", $scope.link1);
-      });
+      var exportUrl = 'http://export.highcharts.com/';
+      $.post(exportUrl, data, function(data) {
+          url = exportUrl + data;
+          console.log('inside: ', url);
+          $scope.link1 = url;
+          console.log("inside2: ", $scope.link1);
+          //window.open(url);
+        })
+        .done(function() {
+          resolve();
+          console.log("after: ", $scope.link1);
+        });
+    });
   }
 
   function save_chart2(chart, filename) {
-    var data = {
-      options: JSON.stringify($chartConfig2),
-      filename: filename,
-      type: 'image/png',
-      async: true
-    };
+    return new Promise(function(resolve, reject) {
+      var data = {
+        options: JSON.stringify($chartConfig2),
+        filename: filename,
+        type: 'image/png',
+        async: true
+      };
 
-    var exportUrl = 'http://export.highcharts.com/';
-    $.post(exportUrl, data, function(data) {
-        url = exportUrl + data;
-        console.log('inside: ', url);
-        $scope.link2 = url;
-        console.log("inside2: ", $scope.link2);
-        //window.open(url);
-      })
-      .done(function() {
-        console.log("after: ", $scope.link2);
-      });
+      var exportUrl = 'http://export.highcharts.com/';
+      $.post(exportUrl, data, function(data) {
+          url = exportUrl + data;
+          console.log('inside: ', url);
+          $scope.link2 = url;
+          console.log("inside2: ", $scope.link2);
+          //window.open(url);
+        })
+        .done(function() {
+          resolve();
+          console.log("after: ", $scope.link2);
+        });
+    });
   }
 
 
